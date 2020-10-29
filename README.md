@@ -1,3 +1,6 @@
+API: [https://github.com/benawad/vscode-stories-api](https://github.com/benawad/vscode-stories-api)
+Serverless Image Uploader: [https://github.com/benawad/vscode-stories-serverless-image-uploader](https://github.com/benawad/vscode-stories-serverless-image-uploader)
+
 ## Stories for Visual Studio Code
 
 ![stories on sidebar](readme-pics/fullscreen.png)
