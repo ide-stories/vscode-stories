@@ -1,6 +1,7 @@
 Context: [https://youtu.be/ApR-kNXxLUs](https://youtu.be/ApR-kNXxLUs)
 
 API: [https://github.com/benawad/vscode-stories-api](https://github.com/benawad/vscode-stories-api)
+
 Serverless Image Uploader: [https://github.com/benawad/vscode-stories-serverless-image-uploader](https://github.com/benawad/vscode-stories-serverless-image-uploader)
 
 ## Stories for Visual Studio Code
