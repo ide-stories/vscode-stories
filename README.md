@@ -14,7 +14,7 @@ Context: [https://youtu.be/ApR-kNXxLUs](https://youtu.be/ApR-kNXxLUs)
 
 ## Recording
 
-This uses ffmpeg, so if you don't have it on your computer it'll prompt you to download it. You can record for up to 30 seconds and it records anything in the viewport.
+This uses ffmpeg, so if you don't have it on your computer it'll prompt you to download it. You can record for up to 30 seconds and it records anything in the viewport. This might not work on some Linux setups.
 
 ![record button](readme-pics/record.png)
 
