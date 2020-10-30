@@ -74,6 +74,12 @@ export function activate(context: vscode.ExtensionContext) {
   }
 
   async function record() {
+    if (5) {
+      vscode.window.showErrorMessage(
+        "I have turned off recordings because people were uploading nsfw content."
+      );
+      return;
+    }
     try {
       if (!(await initRecording())) {
         return;
