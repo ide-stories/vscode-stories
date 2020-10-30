@@ -10,7 +10,7 @@
   "publisher": "benawad",
   "version": "1.0.0",
   "engines": {
-    "vscode": "^1.49.0"
+    "vscode": "^1.50.0"
   },
   "categories": [
     "Other"
