@@ -44,14 +44,16 @@
               "flutter",
               "react",
               "vue",
-              "angular"
+              "angular",
+              "python"
             ],
             "enumDescriptions": [
               "for the minimalists",
               "for the great people out there",
               "for the true kings",
               "if you like matcha",
-              "for the carrot farmers"
+              "for the carrot farmers",
+              "for the ai enthusiasts out there"
             ]
           }
         }
