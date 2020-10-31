@@ -4,7 +4,28 @@
   border-radius: 50%;
 }
 
-.top {
+.image-container {
+  width: 100%;
+  height: 60%;
+  text-align: center;
+  position: relative;
+  /* background-color:  */
+}
+
+.image-container > img {
+  max-height:100%;
+  max-width:100%;
+  height:auto;
+  width:auto;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  position: absolute;
+}
+
+.data-container {
   margin: 10px 0px;
   display: flex;
   align-items: center;
@@ -37,4 +58,33 @@
 
 .likes {
   margin-left: 3px;
+}
+
+.comment-section-container {
+  width: 100%;
+  height: calc(40% - 78px);
+  box-sizing: border-box;
+  position: relative;
+  background: var(--vscode-editorWidget-background);
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.comment-section-container > .comments {
+  height: calc(100% - 40px);
+  padding-top: 5px;
+  overflow-y: auto;
+}
+
+.comment-section-container > .comments > .comment {
+  margin: 0 10px;
+}
+
+.comment-section-container > .comment-textarea {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  box-sizing: border-box;
+  padding: 12px;
+  height: 40px;
 }
