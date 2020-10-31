@@ -28,6 +28,10 @@
             "description": "FFmpeg Binary Location",
             "type": "string"
           },
+          "stories.recording-location": {
+            "description": "Recordings Location",
+            "type": "string"
+          },
           "stories.username": {
             "description": "Username that shows up when you post a story",
             "type": "string"
@@ -41,12 +45,14 @@
             "default": "vanilla js",
             "enum": [
               "vanilla js",
+              "flutter",
               "react",
               "vue",
               "angular"
             ],
             "enumDescriptions": [
               "for the minimalists",
+              "for the great people out there",
               "for the true kings",
               "if you like matcha",
               "for the carrot farmers"

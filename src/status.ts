@@ -38,7 +38,8 @@ export class RecordingStatus {
   stop() {
     this.recordingStopped();
     this.item.command = "stories.record";
-    this.item.text = "$(debug-start) Record Story";
+    this.item.text = "$(debug-start)";
+    this.item.tooltip = "Record Story";
     this.counting = false;
   }
 
