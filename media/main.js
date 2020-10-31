@@ -75,7 +75,7 @@
       stories.forEach((story) => {
         gridNode.append(storyToNode(story));
       });
-    } catch (err) {gridNode
+    } catch (err) {
       vscode.postMessage({ type: "onError", value: err.message });
     }
   }
