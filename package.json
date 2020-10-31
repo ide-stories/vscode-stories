@@ -46,7 +46,8 @@
               "vue",
               "angular",
               "python",
-              "dart"
+              "dart",
+              "java"
             ],
             "enumDescriptions": [
               "for the minimalists",
@@ -55,7 +56,8 @@
               "if you like matcha",
               "for the carrot farmers",
               "for the ai enthusiasts out there",
-              "for the null safety lovers"
+              "for the null safety lovers",
+              "for the coffee people"
             ]
           }
         }

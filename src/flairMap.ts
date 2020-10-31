@@ -5,4 +5,5 @@ export const flairMap = {
   angular: "carrot.png",
   python: "python.svg",
   dart: "dart.svg",
+  java: "java.svg",
 };
