@@ -12,7 +12,13 @@
     angular: "https://imgur.com/ISJUTQr.png",
   };
   const gridNode = document.querySelector(".story-grid");
+  const searchBar = document.querySelector(".searchbar");
   let cursor = 0;
+
+  function storySearchHandler(storyElement) {
+    storyElement.style.display =
+      storyElement.querySelector(".name-container > div").textContent.search(new RegExp(searchBar.value, "i")) == -1 ? "none" : "block";
+  }
 
   function storyToNode(story) {
     const container = document.createElement("div");
@@ -47,6 +53,7 @@
       icon.innerHTML = `<img src="${imgMap[story.flair]}" />`;
       nameContainer.appendChild(icon);
     }
+    storySearchHandler(container);
     return container;
   }
 
@@ -68,7 +75,7 @@
       stories.forEach((story) => {
         gridNode.append(storyToNode(story));
       });
-    } catch (err) {
+    } catch (err) {gridNode
       vscode.postMessage({ type: "onError", value: err.message });
     }
   }
@@ -106,4 +113,11 @@
       value: curr.dataset.everything,
     });
   });
+
+  searchBar.addEventListener("input", (e) => {
+    for (let story of gridNode.children) {
+      storySearchHandler(story);
+    }
+  });
+
 })();

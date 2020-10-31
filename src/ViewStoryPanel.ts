@@ -187,7 +187,6 @@ export class ViewStoryPanel {
       case "react":
         break;
     }
-
     return `<!DOCTYPE html>
 			<html lang="en">
 			<head>
