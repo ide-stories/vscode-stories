@@ -4,4 +4,5 @@ export const flairMap = {
   vue: "vue.svg",
   angular: "carrot.png",
   python: "python.svg",
+  dart: "dart.svg",
 };

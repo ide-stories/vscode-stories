@@ -45,7 +45,8 @@
               "react",
               "vue",
               "angular",
-              "python"
+              "python",
+              "dart"
             ],
             "enumDescriptions": [
               "for the minimalists",
@@ -53,7 +54,8 @@
               "for the true kings",
               "if you like matcha",
               "for the carrot farmers",
-              "for the ai enthusiasts out there"
+              "for the ai enthusiasts out there",
+              "for the null safety lovers"
             ]
           }
         }
