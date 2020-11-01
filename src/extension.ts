@@ -6,6 +6,7 @@ import { Util } from "./util";
 
 export function activate(context: vscode.ExtensionContext) {
   Util.context = context;
+  Util.checkAndUpdateFlair();
 
   const statusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Right
