@@ -53,7 +53,7 @@
               "dart",
               "java",
               "golang",
-              "c++"
+              "cpp"
             ],
             "enumDescriptions": [
               "for the minimalists",
