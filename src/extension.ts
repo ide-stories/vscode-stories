@@ -36,6 +36,10 @@ export function activate(context: vscode.ExtensionContext) {
         if (flair) {
           mutationNoErr("/update-flair", {
             flair,
+          }).then(() => {
+            vscode.window.showInformationMessage(
+              "Flair successfully set, it'll show up next time stories are loaded."
+            );
           });
         }
       });
