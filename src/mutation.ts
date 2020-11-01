@@ -11,7 +11,7 @@ export const mutationNoErr = async (path: string, body: any) => {
 
 export const mutation = async (path: string, body: any) => {
   try {
-    const r = await fetch("http://localhost:8080" + path, {
+    const r = await fetch("https://bowl.azurewebsites.net" + path, {
       method: "POST",
       body: JSON.stringify(body),
       headers: {
