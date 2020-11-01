@@ -1,22 +1,26 @@
-Context: [https://youtu.be/ApR-kNXxLUs](https://youtu.be/ApR-kNXxLUs)
-
 ## Stories for Visual Studio Code
 
-![stories on sidebar](readme-pics/fullscreen.png)
+Context: [https://youtu.be/ApR-kNXxLUs](https://youtu.be/ApR-kNXxLUs)
 
-## When you first install the panel will probably be at the bottom
+Stories is a simple way of sharing code snippets with other developers.
 
-![stories hidden in sidebar](readme-pics/closed.png)
+## Getting Started
 
-## Alternatively, you can click the icon on the side for a full panel
+You can download Stories from the [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=benawad.stories).
 
-![stories side icon](readme-pics/side-icon.png)
+Once you have it, you should see something similar to this:
 
-## Recording
+![stories UI](readme-pics/location.png)
 
-This uses ffmpeg, so if you don't have it on your computer it'll prompt you to download it. You can record for up to 30 seconds and it records anything in the viewport. This might not work on some Linux setups.
+You can click the button or open up the panel to access the stories. Once you have that open up, you can click on anyone's profile picture, and you'll be shown a file of what they're currently working on!
 
-![record button](readme-pics/record.png)
+![stories view](readme-pics/view.png)
+
+To upload your own story, click the Create Story button on the bottom left.
+
+![stories upload](readme-pics/upload.png)
+
+And you've just uploaded your very own story!
 
 ## Other code
 
