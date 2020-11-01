@@ -38,3 +38,8 @@
 .likes {
   margin-left: 3px;
 }
+
+.created-time {
+  display: flex;
+  margin-right: 10px;
+}
