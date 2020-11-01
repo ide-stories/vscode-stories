@@ -1,28 +1,10 @@
-import * as vscode from "vscode";
 import * as path from "path";
-import { lastFlairKey, refreshTokenKey, tokenKey } from "./constants";
-import { Config } from "./config";
-import { mutationNoErr } from "./mutation";
+import * as vscode from "vscode";
+import { refreshTokenKey, tokenKey } from "./constants";
 
 // https://github.com/arciisine/vscode-chronicler/blob/master/src/util.ts
 export class Util {
   static context: vscode.ExtensionContext;
-
-  static checkAndUpdateFlair() {
-    if (!this.isLoggedIn()) {
-      return;
-    }
-    const flair = Config.getConfig("flair");
-    const lastFlair =
-      this.context.globalState.get<string>(lastFlairKey) || "vanilla js";
-    console.log(flair, lastFlair);
-    if (flair !== lastFlair) {
-      this.context.globalState.update(lastFlairKey, flair);
-      mutationNoErr("/update-flair", {
-        flair,
-      });
-    }
-  }
 
   static getRefreshToken() {
     return this.context.globalState.get<string>(refreshTokenKey) || "";

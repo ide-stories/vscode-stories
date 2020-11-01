@@ -20,48 +20,6 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
-    "configuration": [
-      {
-        "title": "Stories",
-        "properties": {
-          "stories.flair": {
-            "type": "string",
-            "default": "vanilla js",
-            "enum": [
-              "vanilla js",
-              "flutter",
-              "react",
-              "vue",
-              "angular",
-              "python",
-              "dart",
-              "java",
-              "c",
-              "cpp",
-              "cSharp",
-              "kotlin",
-              "go",
-              "swift"
-            ],
-            "enumDescriptions": [
-              "for the minimalists",
-              "for the great people out there",
-              "for the true kings",
-              "if you like matcha",
-              "for the carrot farmers",
-              "for the ai enthusiasts out there",
-              "for the null safety lovers",
-              "for the C developers",
-              "for the speedy guys",
-              "for C# developers",
-              "for the Android developers",
-              "go",
-              "for the iOS developers"
-            ]
-          }
-        }
-      }
-    ],
     "menus": {
       "view/title": [
         {
@@ -84,6 +42,11 @@
         "title": "Authenticate",
         "category": "Stories",
         "command": "stories.authenticate"
+      },
+      {
+        "title": "Set Flair",
+        "category": "Stories",
+        "command": "stories.setFlair"
       },
       {
         "title": "Create Story",

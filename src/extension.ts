@@ -6,7 +6,6 @@ import { Util } from "./util";
 
 export function activate(context: vscode.ExtensionContext) {
   Util.context = context;
-  Util.checkAndUpdateFlair();
 
   const statusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Right
@@ -15,6 +14,32 @@ export function activate(context: vscode.ExtensionContext) {
   statusBarItem.text = "$(gist) Create Story";
   statusBarItem.show();
 
+  vscode.commands.registerCommand("stories.setFlair", () => {
+    vscode.window
+      .showQuickPick([
+        "vanilla js",
+        "flutter",
+        "react",
+        "vue",
+        "angular",
+        "python",
+        "dart",
+        "java",
+        "c",
+        "cpp",
+        "cSharp",
+        "kotlin",
+        "go",
+        "swift",
+      ])
+      .then((flair) => {
+        if (flair) {
+          mutationNoErr("/update-flair", {
+            flair,
+          });
+        }
+      });
+  });
   vscode.commands.registerCommand("stories.authenticate", () => authenticate());
   vscode.commands.registerCommand("stories.create", async () => {
     if (!Util.isLoggedIn()) {
