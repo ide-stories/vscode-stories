@@ -16,7 +16,7 @@
   function storyToNode(story) {
     const container = document.createElement("div");
     container.setAttribute("class", "unit");
-    container.setAttribute("data-everything", JSON.stringify(story));
+    container.setAttribute("data-everything", story.id);
     const div = document.createElement("div");
     div.setAttribute("class", "avatar has-story");
     const img = document.createElement("img");
@@ -52,8 +52,7 @@
   async function loadStuff() {
     try {
       const response = await fetch(
-        "https://bowl.azurewebsites.net/stories/hot" +
-          (cursor ? `/${cursor}` : "")
+        "http://localhost:8080/text-stories/hot" + (cursor ? `/${cursor}` : "")
       );
       const { stories, hasMore } = await response.json();
       if (!hasMore) {

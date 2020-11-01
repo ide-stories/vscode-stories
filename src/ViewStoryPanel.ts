@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
 import { getNonce } from "./getNonce";
-import fetch from "node-fetch";
 import { flairMap } from "./flairMap";
 
 const imgMap = {
@@ -21,7 +20,7 @@ export class ViewStoryPanel {
 
   private readonly _panel: vscode.WebviewPanel;
   private readonly _extensionUri: vscode.Uri;
-  private _story: any;
+  private _storyId: any;
   private _disposables: vscode.Disposable[] = [];
 
   public static createOrShow(extensionUri: vscode.Uri, story: any) {
@@ -32,7 +31,7 @@ export class ViewStoryPanel {
     // If we already have a panel, show it.
     if (ViewStoryPanel.currentPanel) {
       ViewStoryPanel.currentPanel._panel.reveal(column);
-      ViewStoryPanel.currentPanel._story = story;
+      ViewStoryPanel.currentPanel._storyId = story;
       ViewStoryPanel.currentPanel._update();
       return;
     }
@@ -77,7 +76,7 @@ export class ViewStoryPanel {
   ) {
     this._panel = panel;
     this._extensionUri = extensionUri;
-    this._story = story;
+    this._storyId = story;
 
     // Set the webview's initial html content
     this._update();
@@ -163,7 +162,7 @@ export class ViewStoryPanel {
 
     // Use a nonce to only allow specific scripts to be run
     const nonce = getNonce();
-    const story = this._story;
+    const story = this._storyId;
 
     this._panel.title = story.creatorUsername;
 
@@ -194,7 +193,7 @@ export class ViewStoryPanel {
 					Use a content security policy to only allow loading images from https or from our extension directory,
 					and only allow scripts that have a specific nonce.
 				-->
-        <meta http-equiv="Content-Security-Policy" content="default-src https://bowl.azurewebsites.net; img-src https: data:; style-src ${
+        <meta http-equiv="Content-Security-Policy" content="default-src http://localhost:8080; img-src https: data:; style-src ${
           webview.cspSource
         }; script-src 'nonce-${nonce}';">
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">

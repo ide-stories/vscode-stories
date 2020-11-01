@@ -1,4 +1,6 @@
+import fetch from "node-fetch";
 import * as vscode from "vscode";
+import { getStoryById } from "./api";
 import { getNonce } from "./getNonce";
 import { ViewStoryPanel } from "./ViewStoryPanel";
 
@@ -29,10 +31,17 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
           if (!data.value) {
             return;
           }
-          ViewStoryPanel.createOrShow(
-            this._extensionUri,
-            JSON.parse(data.value)
-          );
+          const story = await getStoryById(data.value);
+          if (story) {
+            vscode.workspace
+              .openTextDocument({
+                content: story.text,
+                language: story.programmingLanguageId,
+              })
+              .then((d) => {
+                vscode.window.showTextDocument(d);
+              });
+          }
           break;
         }
         case "onError": {
@@ -74,7 +83,7 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
 					Use a content security policy to only allow loading images from https or from our extension directory,
 					and only allow scripts that have a specific nonce.
         -->
-        <meta http-equiv="Content-Security-Policy" content="default-src https://bowl.azurewebsites.net; img-src https: data:; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
+        <meta http-equiv="Content-Security-Policy" content="default-src http://localhost:8080; img-src https: data:; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
 				<link href="${styleResetUri}" rel="stylesheet">
 				<link href="${styleVSCodeUri}" rel="stylesheet">
