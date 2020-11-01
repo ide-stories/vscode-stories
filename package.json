@@ -47,7 +47,8 @@
               "angular",
               "python",
               "dart",
-              "java"
+              "java",
+              "golang"
             ],
             "enumDescriptions": [
               "for the minimalists",
@@ -57,7 +58,8 @@
               "for the carrot farmers",
               "for the ai enthusiasts out there",
               "for the null safety lovers",
-              "for the coffee people"
+              "for the coffee people",
+              ""
             ]
           }
         }
