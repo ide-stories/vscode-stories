@@ -11,4 +11,5 @@ export const flairMap = {
   go: "go.svg",
   swift: "swift.svg",
   cSharp: "cSharp.svg",
+  c: "c.svg",
 };
