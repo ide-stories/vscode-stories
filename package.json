@@ -49,7 +49,8 @@
               "dart",
               "java",
               "cpp",
-              "kotlin"
+              "kotlin",
+              "go"
             ],
             "enumDescriptions": [
               "for the minimalists",
@@ -60,7 +61,8 @@
               "for the ai enthusiasts out there",
               "for the null safety lovers",
               "for the speedy guys",
-              "kotlin"
+              "kotlin",
+              "go"
             ]
           }
         }
