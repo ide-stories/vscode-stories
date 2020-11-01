@@ -48,7 +48,8 @@
               "python",
               "dart",
               "java",
-              "cpp"
+              "cpp",
+              "kotlin"
             ],
             "enumDescriptions": [
               "for the minimalists",
@@ -58,7 +59,8 @@
               "for the carrot farmers",
               "for the ai enthusiasts out there",
               "for the null safety lovers",
-              "for the speedy guys"
+              "for the speedy guys",
+              "kotlin"
             ]
           }
         }
