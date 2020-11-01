@@ -16,7 +16,7 @@ You can click the button or open up the panel to access the stories. Once you ha
 
 ![stories view](readme-pics/view.png)
 
-To upload your own story, click the Create Story button on the bottom left.
+To upload your own story, click the Create Story button on the bottom right.
 
 ![stories upload](readme-pics/upload.png)
 
