@@ -6,4 +6,5 @@ export const flairMap = {
   python: "python.svg",
   dart: "dart.svg",
   java: "java.svg",
+  cpp: "cpp.svg",
 };
