@@ -3,4 +3,7 @@ export const flairMap = {
   react: "react.svg",
   vue: "vue.svg",
   angular: "carrot.png",
+  python: "python.svg",
+  dart: "dart.svg",
+  java: "java.svg",
 };

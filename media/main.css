@@ -56,7 +56,6 @@
 .story-grid {
   display: grid;
   gap: 10px;
-  justify-content: space-around;
   grid-template-columns: repeat(auto-fit, 60px);
   margin-top: 5px;
   margin-bottom: 20px;
