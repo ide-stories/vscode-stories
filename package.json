@@ -32,14 +32,31 @@
               "flutter",
               "react",
               "vue",
-              "angular"
+              "angular",
+              "python",
+              "dart",
+              "java",
+              "c",
+              "cpp",
+              "cSharp",
+              "kotlin",
+              "go",
+              "swift"
             ],
             "enumDescriptions": [
               "for the minimalists",
               "for the great people out there",
               "for the true kings",
               "if you like matcha",
-              "for the carrot farmers"
+              "for the carrot farmers",
+              "for the ai enthusiasts out there",
+              "for the null safety lovers",
+              "for the C developers",
+              "for the speedy guys",
+              "for C# developers",
+              "for the Android developers",
+              "go",
+              "for the iOS developers"
             ]
           }
         }
