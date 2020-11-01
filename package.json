@@ -48,7 +48,8 @@
               "python",
               "dart",
               "java",
-              "golang"
+              "golang",
+              "c++"
             ],
             "enumDescriptions": [
               "for the minimalists",
@@ -59,7 +60,8 @@
               "for the ai enthusiasts out there",
               "for the null safety lovers",
               "for the coffee people",
-              ""
+              "if you like gopher",
+              "for those who like fast things"
             ]
           }
         }

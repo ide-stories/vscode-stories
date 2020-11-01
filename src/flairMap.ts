@@ -7,4 +7,5 @@ export const flairMap = {
   dart: "dart.svg",
   java: "java.svg",
   golang: "golang.svg",
+  cpp: "cpp.svg"
 };
