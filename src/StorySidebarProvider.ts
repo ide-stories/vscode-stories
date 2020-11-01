@@ -6,6 +6,7 @@ import { ViewStoryPanel } from "./ViewStoryPanel";
 
 export class StorySidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
+  _storyTextDocuments: vscode.TextDocument[] = [];
 
   constructor(private readonly _extensionUri: vscode.Uri) {}
 
@@ -33,6 +34,27 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
           }
           const story = await getStoryById(data.value);
           if (story) {
+            const doc = vscode.window.activeTextEditor?.document;
+            if (
+              doc &&
+              doc.isDirty &&
+              this._storyTextDocuments.some(
+                (x) => x === vscode.window.activeTextEditor?.document
+              )
+            ) {
+              vscode.window.activeTextEditor?.edit((eb) => {
+                eb.replace(
+                  new vscode.Range(0, 0, doc.lineCount, 0),
+                  story.text
+                );
+                vscode.languages.setTextDocumentLanguage(
+                  doc,
+                  story.programmingLanguageId
+                );
+              });
+              return;
+            }
+
             vscode.workspace
               .openTextDocument({
                 content: story.text,
@@ -40,6 +62,7 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
               })
               .then((d) => {
                 vscode.window.showTextDocument(d);
+                this._storyTextDocuments.push(d);
               });
           }
           break;
