@@ -51,7 +51,9 @@ export class Config {
   }
 
   static async getFilename() {
-    const dir = await this.getDestFolder();
+    const dir = this.hasConfig("recording-location") 
+    ? this.getConfig("recording-location") as string 
+    : await this.getDestFolder();
     const folders = vscode.workspace.workspaceFolders;
     const ws = folders
       ? folders![0].name.replace(/[^A-Za-z0-9\-_]+/g, "_")
