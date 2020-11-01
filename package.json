@@ -50,7 +50,8 @@
               "java",
               "cpp",
               "kotlin",
-              "go"
+              "go",
+              "swift"
             ],
             "enumDescriptions": [
               "for the minimalists",
@@ -62,7 +63,8 @@
               "for the null safety lovers",
               "for the speedy guys",
               "kotlin",
-              "go"
+              "go",
+              "for the iOS developers"
             ]
           }
         }

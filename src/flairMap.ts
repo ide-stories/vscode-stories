@@ -9,4 +9,5 @@ export const flairMap = {
   cpp: "cpp.svg",
   kotlin: "kotlin.svg",
   go: "go.svg",
+  swift: "swift.svg",
 };
