@@ -5,7 +5,7 @@ import { Util } from "./util";
 
 export const mutationNoErr = async (path: string, body: any) => {
   try {
-    const d = mutation(path, body);
+    const d = await mutation(path, body);
     return d;
   } catch {}
 };
