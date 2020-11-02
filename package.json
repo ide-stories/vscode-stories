@@ -95,7 +95,29 @@
           "name": "Stories"
         }
       ]
-    }
+    },
+    "keybindings": [
+      {
+        "command": "stories.refresh",
+        "key": "ctrl+alt+s r",
+        "mac": "cmd+alt+s r"
+      },
+      {
+        "command": "stories.setFlair",
+        "key": "ctrl+alt+s f",
+        "mac": "cmd+alt+s f"
+      },
+      {
+        "command": "stories.startTextRecording",
+        "key": "ctrl+alt+s s",
+        "mac": "cmd+alt+s s"
+      },
+      {
+        "command": "stories.stopTextRecording",
+        "key": "ctrl+alt+s q",
+        "mac": "cmd+alt+s q"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "yarn run compile",
