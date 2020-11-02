@@ -70,12 +70,22 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
               story.hasLiked ? undefined : story.id
             );
             if (story.recordingSteps) {
-              playback(
-                story.recordingSteps.map((x: any) => [
-                  x[0],
-                  x[1].map((y: any) => rehydrateChangeEvent(y)),
-                ])
-              );
+              while (true) {
+                await playback(
+                  story.recordingSteps.map((x: any) => [
+                    x[0],
+                    x[1].map((y: any) => rehydrateChangeEvent(y)),
+                  ])
+                );
+                const choice = await vscode.window.showInformationMessage(
+                  `Would you like the story to play again?`,
+                  "Replay",
+                  "Cancel"
+                );
+                if (choice !== "Replay") {
+                  break;
+                }
+              }
             }
           }
           break;

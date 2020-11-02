@@ -36,13 +36,4 @@ export const playback = async (
     });
     i++;
   }
-
-  const choice = await vscode.window.showInformationMessage(
-    `Would you like the story to play again?`,
-    "Replay",
-    "Cancel"
-  );
-  if (choice === "Replay") {
-    playback(data);
-  }
 };
