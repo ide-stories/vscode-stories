@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
-
-const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
+import { sleep } from "./sleep";
 
 export const playback = async (
   data: Array<[number, Array<vscode.TextDocumentContentChangeEvent>]>
@@ -24,22 +23,26 @@ export const playback = async (
       await sleep(30);
       continue;
     }
-    try {
-      await vscode.window.activeTextEditor.edit((edit) => {
-        changeBlock.forEach((change) => {
-          if (change.text === "") {
-            edit.delete(change.range);
-          } else if (change.rangeLength === 0) {
-            edit.insert(change.range.start, change.text);
-          } else {
-            edit.replace(change.range, change.text);
-          }
-        });
+    await vscode.window.activeTextEditor.edit((edit) => {
+      changeBlock.forEach((change) => {
+        if (change.text === "") {
+          edit.delete(change.range);
+        } else if (change.rangeLength === 0) {
+          edit.insert(change.range.start, change.text);
+        } else {
+          edit.replace(change.range, change.text);
+        }
       });
-    } catch (err) {
-      console.log(err, "rip", changeBlock);
-      break;
-    }
+    });
     i++;
+  }
+
+  const choice = await vscode.window.showInformationMessage(
+    `Would you like the story to play again?`,
+    "Replay",
+    "Cancel"
+  );
+  if (choice === "Replay") {
+    playback(data);
   }
 };

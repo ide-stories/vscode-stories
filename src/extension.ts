@@ -1,3 +1,4 @@
+import { SSL_OP_EPHEMERAL_RSA } from "constants";
 import { application } from "express";
 import * as vscode from "vscode";
 import { likeStory } from "./api";
@@ -6,6 +7,7 @@ import { DeleteStatus } from "./deleteStatus";
 import { LikeStatus } from "./likeStatus";
 import { mutation, mutationNoErr } from "./mutation";
 import { playback } from "./playback";
+import { sleep } from "./sleep";
 import { RecordingStatus } from "./status";
 import { StorySidebarProvider } from "./StorySidebarProvider";
 import { Util } from "./util";
@@ -185,14 +187,15 @@ export function activate(context: vscode.ExtensionContext) {
       return;
     }
     status.start();
+    await sleep(3000);
     filename = vscode.window.activeTextEditor.document.fileName;
     startingText = vscode.window.activeTextEditor.document.getText();
     language = vscode.window.activeTextEditor.document.languageId;
     lastDelete = false;
     lastMs = 0;
-    startDate = new Date().getTime();
     data = [[0, []]];
     isRecording = true;
+    startDate = new Date().getTime();
     setTimeout(() => {
       if (isRecording) {
         stop();

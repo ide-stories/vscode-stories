@@ -1,5 +1,6 @@
 import { window, StatusBarItem, StatusBarAlignment } from "vscode";
 import { Config } from "./config";
+import { sleep } from "./sleep";
 
 function clean(x: number) {
   let res = `${Math.trunc(x)}`;
@@ -8,8 +9,6 @@ function clean(x: number) {
   }
   return res;
 }
-
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 const SECOND_MS = 1000;
 const MINUTE_MS = SECOND_MS * 60;
@@ -78,7 +77,7 @@ export class RecordingStatus {
 
   async countDown(seconds?: number) {
     if (seconds === undefined) {
-      seconds = 0;
+      seconds = 3;
     }
 
     this.item.command = "stories.stopTextRecording";
