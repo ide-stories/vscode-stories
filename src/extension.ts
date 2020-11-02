@@ -1,5 +1,3 @@
-import { SSL_OP_EPHEMERAL_RSA } from "constants";
-import { application } from "express";
 import * as vscode from "vscode";
 import { likeStory } from "./api";
 import { authenticate } from "./authenticate";
