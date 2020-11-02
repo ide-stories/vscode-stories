@@ -85,6 +85,12 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
                 if (choice !== "Replay") {
                   break;
                 }
+                await vscode.window.activeTextEditor?.edit((eb) => {
+                  eb.replace(
+                    new vscode.Range(0, 0, this._doc!.lineCount, 0),
+                    story.text
+                  );
+                });
               }
             }
           }
