@@ -183,13 +183,13 @@ export function activate(context: vscode.ExtensionContext) {
       );
       return;
     }
-    status.start();
     try {
       await status.countDown();
     } catch (err) {
       vscode.window.showWarningMessage("Recording cancelled");
       return;
     }
+    status.start();
     filename = vscode.window.activeTextEditor.document.fileName;
     startingText = vscode.window.activeTextEditor.document.getText();
     language = vscode.window.activeTextEditor.document.languageId;

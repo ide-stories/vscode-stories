@@ -29,7 +29,7 @@ export const playback = async (
     // }
     const currentDuration = new Date().getTime() - playBackDateStart;
     if (currentDuration < ms) {
-      await sleep(30);
+      await sleep(5);
       continue;
     }
     await vscode.window.activeTextEditor.edit((edit) => {
