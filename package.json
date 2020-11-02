@@ -8,7 +8,7 @@
   },
   "description": "Stories for VSCode",
   "publisher": "benawad",
-  "version": "2.7.0",
+  "version": "2.8.0",
   "engines": {
     "vscode": "^1.50.0"
   },
