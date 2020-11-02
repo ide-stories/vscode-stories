@@ -72,7 +72,8 @@
   async function loadStuff() {
     try {
       const response = await fetch(
-        "http://localhost:8080/text-stories/hot" + (cursor ? `/${cursor}` : "")
+        "https://bowl.azurewebsites.net/text-stories/hot" +
+          (cursor ? `/${cursor}` : "")
       );
       const { stories, hasMore } = await response.json();
       if (!hasMore) {

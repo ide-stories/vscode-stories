@@ -10,7 +10,7 @@ export const queryNoErr = async (path: string) => {
 
 export const query = async (path: string) => {
   try {
-    const r = await fetch("http://localhost:8080" + path);
+    const r = await fetch("https://bowl.azurewebsites.net" + path);
     if (r.status !== 200) {
       throw new Error(await r.text());
     }

@@ -9,7 +9,7 @@ export const authenticate = () => {
   const server = app.listen(54321);
   vscode.commands.executeCommand(
     "vscode.open",
-    vscode.Uri.parse(`http://localhost:8080/auth/github`)
+    vscode.Uri.parse(`https://bowl.azurewebsites.net/auth/github`)
   );
   app.get("/callback/:token/:refreshToken", async (req, res) => {
     const { token, refreshToken } = req.params;
