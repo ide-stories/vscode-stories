@@ -1,12 +1,16 @@
-import fetch from "node-fetch";
 import * as vscode from "vscode";
 import { getStoryById } from "./api";
 import { getNonce } from "./getNonce";
-import { ViewStoryPanel } from "./ViewStoryPanel";
+import { LikeStatus } from "./likeStatus";
+import { playback } from "./playback";
+import { rehydrateChangeEvent } from "./rehydrate";
+import * as jwt from "jsonwebtoken";
+import { Util } from "./util";
+import { DeleteStatus } from "./deleteStatus";
 
 export class StorySidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
-  _storyTextDocuments: vscode.TextDocument[] = [];
+  _doc?: vscode.TextDocument;
 
   constructor(private readonly _extensionUri: vscode.Uri) {}
 
@@ -32,38 +36,47 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
           if (!data.value) {
             return;
           }
-          const story = await getStoryById(data.value);
+          const storyP = getStoryById(data.value);
+          if (!this._doc || !this._doc.isDirty) {
+            this._doc = await vscode.workspace.openTextDocument({
+              content: "Loading...",
+            });
+          }
+          await vscode.window.showTextDocument(this._doc);
+          const story = await storyP;
           if (story) {
-            const doc = vscode.window.activeTextEditor?.document;
-            if (
-              doc &&
-              doc.isDirty &&
-              this._storyTextDocuments.some(
-                (x) => x === vscode.window.activeTextEditor?.document
-              )
-            ) {
-              vscode.window.activeTextEditor?.edit((eb) => {
-                eb.replace(
-                  new vscode.Range(0, 0, doc.lineCount, 0),
-                  story.text
-                );
-                vscode.languages.setTextDocumentLanguage(
-                  doc,
-                  story.programmingLanguageId
-                );
-              });
-              return;
+            await vscode.languages.setTextDocumentLanguage(
+              this._doc!,
+              story.programmingLanguageId
+            );
+            await vscode.window.activeTextEditor?.edit((eb) => {
+              eb.replace(
+                new vscode.Range(0, 0, this._doc!.lineCount, 0),
+                story.text
+              );
+            });
+            try {
+              const payload: any = jwt.decode(Util.getAccessToken());
+              if (
+                payload.userId === "dac7eb0f-808b-4842-b193-5d68cc082609" ||
+                payload.userId === story.creatorId
+              ) {
+                DeleteStatus.createDeleteStatus(story.id);
+              }
+            } catch {}
+            LikeStatus.createLikeStatus();
+            LikeStatus.setLikes(
+              story.numLikes,
+              story.hasLiked ? undefined : story.id
+            );
+            if (story.recordingSteps) {
+              playback(
+                story.recordingSteps.map((x: any) => [
+                  x[0],
+                  x[1].map((y: any) => rehydrateChangeEvent(y)),
+                ])
+              );
             }
-
-            vscode.workspace
-              .openTextDocument({
-                content: story.text,
-                language: story.programmingLanguageId,
-              })
-              .then((d) => {
-                vscode.window.showTextDocument(d);
-                this._storyTextDocuments.push(d);
-              });
           }
           break;
         }
@@ -106,7 +119,7 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
 					Use a content security policy to only allow loading images from https or from our extension directory,
 					and only allow scripts that have a specific nonce.
         -->
-        <meta http-equiv="Content-Security-Policy" content="default-src https://bowl.azurewebsites.net; img-src https: data:; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
+        <meta http-equiv="Content-Security-Policy" content="default-src http://localhost:8080; img-src https: data:; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
 				<link href="${styleResetUri}" rel="stylesheet">
 				<link href="${styleVSCodeUri}" rel="stylesheet">

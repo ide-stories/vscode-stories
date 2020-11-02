@@ -1,6 +1,6 @@
 import * as path from "path";
 import * as vscode from "vscode";
-import { refreshTokenKey, tokenKey } from "./constants";
+import { refreshTokenKey, accessTokenKey } from "./constants";
 
 // https://github.com/arciisine/vscode-chronicler/blob/master/src/util.ts
 export class Util {
@@ -11,12 +11,12 @@ export class Util {
   }
 
   static getAccessToken() {
-    return this.context.globalState.get<string>(tokenKey) || "";
+    return this.context.globalState.get<string>(accessTokenKey) || "";
   }
 
   static isLoggedIn() {
     return (
-      !!this.context.globalState.get(tokenKey) &&
+      !!this.context.globalState.get(accessTokenKey) &&
       !!this.context.globalState.get(refreshTokenKey)
     );
   }

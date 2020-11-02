@@ -1,4 +1,5 @@
 import fetch from "node-fetch";
+import { mutation, mutationNoErr } from "./mutation";
 import { queryNoErr } from "./query";
 
 const cache: Record<string, any> = {};
@@ -18,4 +19,15 @@ export const getStoryById = async (id: string) => {
   }
 
   return cache[id];
+};
+
+export const likeStory = async (id: string, newLikeAmount: number) => {
+  try {
+    await mutation("/like-text-story/" + id, {});
+  } catch {
+    return;
+  }
+  if (id in cache) {
+    cache[id].numLikes = newLikeAmount;
+  }
 };

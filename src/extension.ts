@@ -1,18 +1,24 @@
+import { application } from "express";
 import * as vscode from "vscode";
+import { likeStory } from "./api";
 import { authenticate } from "./authenticate";
+import { DeleteStatus } from "./deleteStatus";
+import { LikeStatus } from "./likeStatus";
 import { mutation, mutationNoErr } from "./mutation";
+import { playback } from "./playback";
+import { RecordingStatus } from "./status";
 import { StorySidebarProvider } from "./StorySidebarProvider";
 import { Util } from "./util";
 
 export function activate(context: vscode.ExtensionContext) {
   Util.context = context;
 
-  const statusBarItem = vscode.window.createStatusBarItem(
-    vscode.StatusBarAlignment.Right
-  );
-  statusBarItem.command = "stories.create";
-  statusBarItem.text = "$(gist) Create Story";
-  statusBarItem.show();
+  // const statusBarItem = vscode.window.createStatusBarItem(
+  //   vscode.StatusBarAlignment.Right
+  // );
+  // statusBarItem.command = "stories.create";
+  // statusBarItem.text = "$(gist) Create Story";
+  // statusBarItem.show();
 
   vscode.commands.registerCommand("stories.setFlair", () => {
     vscode.window
@@ -45,10 +51,10 @@ export function activate(context: vscode.ExtensionContext) {
       });
   });
   vscode.commands.registerCommand("stories.authenticate", () => authenticate());
-  vscode.commands.registerCommand("stories.create", async () => {
+  vscode.commands.registerCommand("stories.like", async () => {
     if (!Util.isLoggedIn()) {
       const choice = await vscode.window.showInformationMessage(
-        `You need to login to GitHub to create a story, would you like to continue?`,
+        `You need to login to GitHub to like a story, would you like to continue?`,
         "Yes",
         "Cancel"
       );
@@ -58,55 +64,25 @@ export function activate(context: vscode.ExtensionContext) {
       return;
     }
 
-    if (!vscode.window.activeTextEditor) {
-      vscode.window.showInformationMessage("Open a file to create a story");
-      return;
+    if (LikeStatus.storyId) {
+      LikeStatus.loading();
+      const newLikes = LikeStatus.likes + 1;
+      await likeStory(LikeStatus.storyId, newLikes);
+      LikeStatus.setLikes(newLikes);
     }
-
-    const text = vscode.window.activeTextEditor?.document.getText();
-
-    if (!text) {
-      vscode.window.showInformationMessage("Add some text to your file");
-      return;
-    }
-
-    const choice = await vscode.window.showInformationMessage(
-      `Confirm Story creation: the text in the current file will be uploaded as your story.`,
-      "Ok",
-      "Cancel"
-    );
-
-    if (choice !== "Ok") {
-      return;
-    }
-
-    const programmingLanguageId =
-      vscode.window.activeTextEditor?.document.languageId;
-    const story = await vscode.window.withProgress(
-      {
-        location: vscode.ProgressLocation.Notification,
-        title: "Uploading Story",
-        cancellable: false,
-      },
-      () => {
-        return mutationNoErr("/new-text-story", {
-          text,
-          programmingLanguageId,
-        });
+  });
+  vscode.commands.registerCommand("stories.delete", async () => {
+    if (DeleteStatus.storyId) {
+      DeleteStatus.loading();
+      try {
+        await mutation("/delete-text-story/" + DeleteStatus.storyId, {});
+        vscode.window.showInformationMessage(
+          `Delete successful, but the story is still showing because I'm too lazy to clear the cache atm`
+        );
+        DeleteStatus.doneLoading(true);
+      } catch {
+        DeleteStatus.doneLoading(false);
       }
-    );
-    if (story) {
-      setTimeout(() => {
-        vscode.window.showInformationMessage("Story successfully created");
-      }, 800);
-      provider._view?.webview.postMessage({
-        command: "new-story",
-        story,
-      });
-      provider2._view?.webview.postMessage({
-        command: "new-story",
-        story,
-      });
     }
   });
 
@@ -128,4 +104,135 @@ export function activate(context: vscode.ExtensionContext) {
       command: "refresh",
     });
   });
+
+  let isRecording = false;
+
+  let filename = "untitled";
+  let data: Array<[number, Array<vscode.TextDocumentContentChangeEvent>]> = [];
+  let startingText = "";
+  let language = "";
+  let startDate = new Date().getTime();
+  let lastDelete = false;
+  let lastMs = 0;
+  const status = new RecordingStatus();
+
+  const stop = async () => {
+    status.stop();
+    isRecording = false;
+    const d = await vscode.workspace.openTextDocument({
+      content: startingText,
+      language,
+    });
+    await vscode.window.showTextDocument(d);
+    playback(data);
+    const choice = await vscode.window.showInformationMessage(
+      `Your story is ready to go!`,
+      "Publish",
+      "Discard"
+    );
+    if (choice !== "Publish") {
+      vscode.commands.executeCommand("workbench.action.closeActiveEditor");
+      return;
+    }
+
+    const story = await vscode.window.withProgress(
+      {
+        location: vscode.ProgressLocation.Notification,
+        title: "Uploading...",
+        cancellable: false,
+      },
+      () => {
+        return mutationNoErr("/new-text-story", {
+          filename,
+          text: startingText,
+          recordingSteps: data,
+          programmingLanguageId: language,
+        });
+      }
+    );
+    if (story) {
+      setTimeout(() => {
+        vscode.window.showInformationMessage("Story successfully created");
+      }, 800);
+      provider._view?.webview.postMessage({
+        command: "new-story",
+        story,
+      });
+      provider2._view?.webview.postMessage({
+        command: "new-story",
+        story,
+      });
+    }
+  };
+
+  vscode.commands.registerCommand("stories.startTextRecording", async () => {
+    if (!Util.isLoggedIn()) {
+      const choice = await vscode.window.showInformationMessage(
+        `You need to login to GitHub to record a story, would you like to continue?`,
+        "Yes",
+        "Cancel"
+      );
+      if (choice === "Yes") {
+        authenticate();
+      }
+      return;
+    }
+
+    if (!vscode.window.activeTextEditor) {
+      vscode.window.showInformationMessage(
+        "Open a file to start recording a story"
+      );
+      return;
+    }
+    status.start();
+    filename = vscode.window.activeTextEditor.document.fileName;
+    startingText = vscode.window.activeTextEditor.document.getText();
+    language = vscode.window.activeTextEditor.document.languageId;
+    lastDelete = false;
+    lastMs = 0;
+    startDate = new Date().getTime();
+    data = [[0, []]];
+    isRecording = true;
+    setTimeout(() => {
+      if (isRecording) {
+        stop();
+      }
+    }, 30000);
+  });
+
+  vscode.commands.registerCommand("stories.stopTextRecording", () => stop());
+
+  vscode.workspace.onDidChangeTextDocument(
+    (event) => {
+      if (isRecording) {
+        if (data.length > 100000) {
+          isRecording = false;
+          vscode.window.showWarningMessage(
+            "Recording automatically stopped, the recording data is getting really big."
+          );
+          stop();
+          return;
+        }
+        const ms = new Date().getTime() - startDate;
+        if (ms - 10 > lastMs) {
+          data.push([ms, []]);
+        }
+        for (const change of event.contentChanges) {
+          if (change.text === "") {
+            if (lastDelete) {
+              data[data.length - 1][1].push(change);
+              continue;
+            }
+            data.push([ms, [change]]);
+            lastDelete = true;
+          } else {
+            data[data.length - 1][1].push(change);
+          }
+        }
+        lastMs = ms;
+      }
+    },
+    null,
+    context.subscriptions
+  );
 }
