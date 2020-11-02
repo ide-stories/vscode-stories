@@ -187,7 +187,12 @@ export function activate(context: vscode.ExtensionContext) {
       return;
     }
     status.start();
-    await sleep(3000);
+    try {
+      await status.countDown();
+    } catch (err) {
+      vscode.window.showWarningMessage("Recording cancelled");
+      return;
+    }
     filename = vscode.window.activeTextEditor.document.fileName;
     startingText = vscode.window.activeTextEditor.document.getText();
     language = vscode.window.activeTextEditor.document.languageId;
@@ -196,11 +201,11 @@ export function activate(context: vscode.ExtensionContext) {
     data = [[0, []]];
     isRecording = true;
     startDate = new Date().getTime();
-    setTimeout(() => {
-      if (isRecording) {
-        stop();
-      }
-    }, 30000);
+    // setTimeout(() => {
+    //   if (isRecording) {
+    //     stop();
+    //   }
+    // }, 30000);
   });
 
   vscode.commands.registerCommand("stories.stopTextRecording", () => stop());
