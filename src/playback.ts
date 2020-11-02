@@ -1,10 +1,16 @@
 import * as vscode from "vscode";
 import { sleep } from "./sleep";
 
+let playbackCounter = 0;
+export const incPlaybackCounter = () => {
+  playbackCounter++;
+};
+
 export const playback = async (
   data: Array<[number, Array<vscode.TextDocumentContentChangeEvent>]>
 ) => {
   const playBackDateStart = new Date().getTime();
+  const startingCount = playbackCounter;
   let i = 0;
   const startingDoc = vscode.window.activeTextEditor?.document;
   while (i < data.length) {
@@ -12,6 +18,9 @@ export const playback = async (
       break;
     }
     if (vscode.window.activeTextEditor.document !== startingDoc) {
+      break;
+    }
+    if (startingCount !== playbackCounter) {
       break;
     }
     const [ms, changeBlock] = data[i];
@@ -36,4 +45,6 @@ export const playback = async (
     });
     i++;
   }
+
+  return startingCount === playbackCounter;
 };

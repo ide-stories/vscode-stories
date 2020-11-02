@@ -71,12 +71,15 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
             );
             if (story.recordingSteps) {
               while (true) {
-                await playback(
+                const canGoAgain = await playback(
                   story.recordingSteps.map((x: any) => [
                     x[0],
                     x[1].map((y: any) => rehydrateChangeEvent(y)),
                   ])
                 );
+                if (!canGoAgain) {
+                  break;
+                }
                 const choice = await vscode.window.showInformationMessage(
                   `Would you like the story to play again?`,
                   "Replay",

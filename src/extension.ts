@@ -6,8 +6,7 @@ import { authenticate } from "./authenticate";
 import { DeleteStatus } from "./deleteStatus";
 import { LikeStatus } from "./likeStatus";
 import { mutation, mutationNoErr } from "./mutation";
-import { playback } from "./playback";
-import { sleep } from "./sleep";
+import { incPlaybackCounter, playback } from "./playback";
 import { RecordingStatus } from "./status";
 import { StorySidebarProvider } from "./StorySidebarProvider";
 import { Util } from "./util";
@@ -208,39 +207,46 @@ export function activate(context: vscode.ExtensionContext) {
     // }, 30000);
   });
 
+  context.subscriptions.push(
+    vscode.workspace.onDidOpenTextDocument(() => {
+      incPlaybackCounter();
+    })
+  );
   vscode.commands.registerCommand("stories.stopTextRecording", () => stop());
 
-  vscode.workspace.onDidChangeTextDocument(
-    (event) => {
-      if (isRecording) {
-        if (data.length > 100000) {
-          isRecording = false;
-          vscode.window.showWarningMessage(
-            "Recording automatically stopped, the recording data is getting really big."
-          );
-          stop();
-          return;
-        }
-        const ms = new Date().getTime() - startDate;
-        if (ms - 10 > lastMs) {
-          data.push([ms, []]);
-        }
-        for (const change of event.contentChanges) {
-          if (change.text === "") {
-            if (lastDelete) {
-              data[data.length - 1][1].push(change);
-              continue;
-            }
-            data.push([ms, [change]]);
-            lastDelete = true;
-          } else {
-            data[data.length - 1][1].push(change);
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeTextDocument(
+      (event) => {
+        if (isRecording) {
+          if (data.length > 100000) {
+            isRecording = false;
+            vscode.window.showWarningMessage(
+              "Recording automatically stopped, the recording data is getting really big."
+            );
+            stop();
+            return;
           }
+          const ms = new Date().getTime() - startDate;
+          if (ms - 10 > lastMs) {
+            data.push([ms, []]);
+          }
+          for (const change of event.contentChanges) {
+            if (change.text === "") {
+              if (lastDelete) {
+                data[data.length - 1][1].push(change);
+                continue;
+              }
+              data.push([ms, [change]]);
+              lastDelete = true;
+            } else {
+              data[data.length - 1][1].push(change);
+            }
+          }
+          lastMs = ms;
         }
-        lastMs = ms;
-      }
-    },
-    null,
-    context.subscriptions
+      },
+      null,
+      context.subscriptions
+    )
   );
 }
