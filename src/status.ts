@@ -37,9 +37,8 @@ export class RecordingStatus {
 
   stop() {
     this.recordingStopped();
-    this.item.command = "stories.record";
-    this.item.text = "$(debug-start)";
-    this.item.tooltip = "Record Story";
+    this.item.command = "stories.startTextRecording";
+    this.item.text = "$(debug-start) Record Story";
     this.counting = false;
   }
 
@@ -67,7 +66,7 @@ export class RecordingStatus {
   }
 
   start() {
-    this.item.command = "stories.stop";
+    this.item.command = "stories.stopTextRecording";
     this.item.text = "$(debug-stop) Recording";
 
     const update = this.updateTime.bind(this, this.item.text, Date.now());
@@ -79,11 +78,10 @@ export class RecordingStatus {
 
   async countDown(seconds?: number) {
     if (seconds === undefined) {
-      const defs = await Config.getRecordingDefaults();
-      seconds = defs.countdown || 0;
+      seconds = 0;
     }
 
-    this.item.command = "stories.stop";
+    this.item.command = "stories.stopTextRecording";
 
     this.counting = true;
 

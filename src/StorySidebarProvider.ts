@@ -1,9 +1,16 @@
 import * as vscode from "vscode";
+import { getStoryById } from "./api";
 import { getNonce } from "./getNonce";
-import { ViewStoryPanel } from "./ViewStoryPanel";
+import { LikeStatus } from "./likeStatus";
+import { playback } from "./playback";
+import { rehydrateChangeEvent } from "./rehydrate";
+import * as jwt from "jsonwebtoken";
+import { Util } from "./util";
+import { DeleteStatus } from "./deleteStatus";
 
 export class StorySidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
+  _doc?: vscode.TextDocument;
 
   constructor(private readonly _extensionUri: vscode.Uri) {}
 
@@ -29,10 +36,48 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
           if (!data.value) {
             return;
           }
-          ViewStoryPanel.createOrShow(
-            this._extensionUri,
-            JSON.parse(data.value)
-          );
+          const storyP = getStoryById(data.value);
+          if (!this._doc || !this._doc.isDirty) {
+            this._doc = await vscode.workspace.openTextDocument({
+              content: "Loading...",
+            });
+          }
+          await vscode.window.showTextDocument(this._doc);
+          const story = await storyP;
+          if (story) {
+            await vscode.languages.setTextDocumentLanguage(
+              this._doc!,
+              story.programmingLanguageId
+            );
+            await vscode.window.activeTextEditor?.edit((eb) => {
+              eb.replace(
+                new vscode.Range(0, 0, this._doc!.lineCount, 0),
+                story.text
+              );
+            });
+            try {
+              const payload: any = jwt.decode(Util.getAccessToken());
+              if (
+                payload.userId === "dac7eb0f-808b-4842-b193-5d68cc082609" ||
+                payload.userId === story.creatorId
+              ) {
+                DeleteStatus.createDeleteStatus(story.id);
+              }
+            } catch {}
+            LikeStatus.createLikeStatus();
+            LikeStatus.setLikes(
+              story.numLikes,
+              story.hasLiked ? undefined : story.id
+            );
+            if (story.recordingSteps) {
+              playback(
+                story.recordingSteps.map((x: any) => [
+                  x[0],
+                  x[1].map((y: any) => rehydrateChangeEvent(y)),
+                ])
+              );
+            }
+          }
           break;
         }
         case "onError": {
