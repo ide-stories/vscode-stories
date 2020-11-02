@@ -11,6 +11,10 @@ export class DeleteStatus {
     this.item.command = "stories.delete";
   }
 
+  static hide = () => {
+    DeleteStatus.deleteStatus.item.hide();
+  };
+
   static createDeleteStatus = (storyId: string) => {
     DeleteStatus.storyId = storyId;
     if (!DeleteStatus.deleteStatus) {

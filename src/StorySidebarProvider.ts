@@ -62,6 +62,8 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
                 payload.userId === story.creatorId
               ) {
                 DeleteStatus.createDeleteStatus(story.id);
+              } else {
+                DeleteStatus.hide();
               }
             } catch {}
             LikeStatus.createLikeStatus();
