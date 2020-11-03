@@ -22,6 +22,16 @@ To upload your own story, click the Create Story button on the bottom right.
 
 And you've just uploaded your very own story!
 
+## Install this extension in VS Code
+ Click on the Extenstions Icon appear on the Left side panel <strong> OR </strong> Press ```Ctrl + Shift + X```
+ 
+ Then Search for <b>Stories</b> at the Search bar
+ 
+ It seems like this 👉 
+ 
+ <br/> ![extensions](readme-pics/extenstion.png)
+ 
+  Download and Enjoy 🥳 🎉 !!
 ## Other code
 
 API: [https://github.com/benawad/vscode-stories-api](https://github.com/benawad/vscode-stories-api)
