@@ -3,7 +3,9 @@
 (function () {
   const vscode = acquireVsCodeApi();
 
-  const top = document.querySelector(".top");
+  const top = document.querySelector(".data-container");
+  const commentsSection = document.querySelector('.comments');
+
   const username = top.dataset.username;
   const id = top.dataset.id;
 
@@ -39,4 +41,23 @@
       }
     }
   });
+
+  document.querySelector('.comment-textarea').addEventListener('keydown', (e) => {
+    let target = e.target;
+    let comment = '';
+    if (e.which === 13) {
+      comment = e.target.value;
+    }
+    if (comment !== '') {
+      // I couldn't figure out how to get the user name
+      let by = '';
+      let element = document.createElement('div');
+      element.classList.add('comment');
+      element.innerHTML = `<b>${by}</b>: ${comment}`;
+      commentsSection.prepend(element);
+      target.value = "";
+      target.blur();
+    }
+  });
+
 })();
