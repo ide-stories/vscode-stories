@@ -83,6 +83,10 @@
   margin-bottom: -3px;
 }
 
+.searchbar {
+  margin-bottom: 14px;
+}
+
 .hidden {
   display: none;
 }

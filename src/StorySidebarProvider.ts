@@ -126,6 +126,7 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
 				<link href="${styleMainUri}" rel="stylesheet">
 			</head>
       <body>
+      <input type="text" class="searchbar" placeholder="Search for stories">
       <div class="story-grid">
       </div>
       <button class="button load-more hidden">Load More</button>

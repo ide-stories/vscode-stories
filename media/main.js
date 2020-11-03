@@ -31,7 +31,10 @@
   };
 
   const gridNode = document.querySelector(".story-grid");
+  const searchBar = document.querySelector(".searchbar");
   let cursor = 0;
+  let searchedResultCursor = 0;
+  let isSearching = false;
 
   function storyToNode(story) {
     const container = document.createElement("div");
@@ -66,6 +69,7 @@
       icon.innerHTML = `<img src="${imgMap[story.flair]}" />`;
       nameContainer.appendChild(icon);
     }
+
     return container;
   }
 
@@ -94,7 +98,10 @@
   loadStuff();
   document.querySelector(".load-more").addEventListener("click", async (e) => {
     e.target.disabled = true;
-    await loadStuff();
+    if (isSearching)
+      await loadSearchedStuff();
+    else
+      await loadStuff();
     e.target.disabled = false;
   });
 
@@ -102,12 +109,20 @@
     const message = event.data;
     switch (message.command) {
       case "new-story":
+        if (isSearching && !message.story.creatorUsername.includes(searchBar.value)) {
+          return;
+        }
         gridNode.prepend(storyToNode(message.story));
         break;
       case "refresh":
         gridNode.innerHTML = "";
-        cursor = 0;
-        loadStuff();
+        if (isSearching) {
+          searchedResultCursor = 0;
+          loadSearchedStuff();
+        } else {
+          cursor = 0;
+          loadStuff();
+        }
         break;
     }
   });
@@ -125,4 +140,43 @@
       value: curr.dataset.everything,
     });
   });
+
+  async function loadSearchedStuff(searchInput) {
+    try {
+      const response = await fetch(
+        "https://bowl.azurewebsites.net/text-stories/search/" +
+          `${searchedResultCursor}/` +
+          searchInput
+      );
+      const { stories, hasMore } = await response.json();
+      if (!hasMore) {
+        document.querySelector(".load-more").classList.add("hidden");
+      } else {
+        document.querySelector(".load-more").classList.remove("hidden");
+      }
+      if (stories.length) {
+        searchedResultCursor += 1;
+      }
+      gridNode.innerHTML = ""; // Reset all stories
+      stories.forEach((story) => {
+        gridNode.append(storyToNode(story));
+      });
+    } catch (err) {
+      vscode.postMessage({ type: "onError", value: err.message });
+    }
+  }
+
+  searchBar.addEventListener("input", (e) => {
+    e.target.value = e.target.value.trimLeft();
+
+    if (e.target.value.length === 0 && isSearching) {
+      isSearching = false;
+      gridNode.innerHTML = "";
+      loadStuff();
+      return;
+    }
+    isSearching = true;
+    loadSearchedStuff(e.target.value);
+  });
+
 })();
