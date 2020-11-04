@@ -4,7 +4,7 @@ import { authenticate } from "./authenticate";
 import { DeleteStatus } from "./deleteStatus";
 import { LikeStatus } from "./likeStatus";
 import { mutation, mutationNoErr } from "./mutation";
-import { incPlaybackCounter, playback } from "./playback";
+import { incPlaybackCounter, playback } from "./documentPlayback";
 import { RecordingStatus } from "./status";
 import { StorySidebarProvider } from "./StorySidebarProvider";
 import { Util } from "./util";

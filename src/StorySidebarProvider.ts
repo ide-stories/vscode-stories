@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { getStoryById } from "./api";
 import { getNonce } from "./getNonce";
 import { LikeStatus } from "./likeStatus";
-import { playback } from "./playback";
+import { playback } from "./documentPlayback";
 import { rehydrateChangeEvent } from "./rehydrate";
 import * as jwt from "jsonwebtoken";
 import { Util } from "./util";
