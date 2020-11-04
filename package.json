@@ -106,7 +106,7 @@
     }
   },
   "scripts": {
-    "dev": "concurrently \"npm run svelte-dev\" \"npm run watch\"",
+    "dev": "concurrently \"rollup -c -w\" \"tsc -watch -p ./\"",
     "svelte-build": "rollup -c",
     "svelte-dev": "rollup -c -w",
     "start": "sirv public",
