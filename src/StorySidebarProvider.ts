@@ -113,20 +113,17 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
   }
 
   private _getHtmlForWebview(webview: vscode.Webview) {
-    // Get the local path to main script run in the webview, then convert it to a uri we can use in the webview.
-    const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "media", "main.js")
-    );
-
-    // Do the same for the stylesheet.
     const styleResetUri = webview.asWebviewUri(
       vscode.Uri.joinPath(this._extensionUri, "media", "reset.css")
     );
-    const styleVSCodeUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "media", "vscode.css")
+    const scriptUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(this._extensionUri, "out", "compiled/bundle.js")
     );
     const styleMainUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "media", "main.css")
+      vscode.Uri.joinPath(this._extensionUri, "out", "compiled/bundle.css")
+    );
+    const styleVSCodeUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(this._extensionUri, "media", "vscode.css")
     );
 
     // Use a nonce to only allow a specific script to be run.
@@ -147,9 +144,11 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
 				<link href="${styleMainUri}" rel="stylesheet">
 			</head>
       <body>
+      <!--
       <div class="story-grid">
       </div>
       <button class="button load-more hidden">Load More</button>
+      -->
 				<script nonce="${nonce}" src="${scriptUri}"></script>
 			</body>
 			</html>`;

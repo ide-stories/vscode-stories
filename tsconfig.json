@@ -15,6 +15,7 @@
 		// "noUnusedParameters": true,  /* Report errors on unused parameters. */
 	},
 	"exclude": [
+		"svelte-stuff",
 		"node_modules",
 		".vscode-test"
 	]
