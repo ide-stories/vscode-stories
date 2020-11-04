@@ -16,7 +16,15 @@
     "Other"
   ],
   "activationEvents": [
-    "*"
+    "onCommand:stories.refresh",
+    "onCommand:stories.authenticate",
+    "onCommand:stories.setFlair",
+    "onCommand:stories.startTextRecording",
+    "onCommand:stories.stopTextRecording",
+    "onCommand:stories.like",
+    "onCommand:stories.delete",
+    "onView:stories-full",
+    "onView:storiesPanel"
   ],
   "main": "./out/extension.js",
   "contributes": {
