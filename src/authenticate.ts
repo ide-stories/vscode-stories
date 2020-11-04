@@ -1,6 +1,6 @@
-import * as express from "express";
+import express from "express";
 import * as vscode from "vscode";
-import { refreshTokenKey, accessTokenKey } from "./constants";
+import { refreshTokenKey, accessTokenKey, apiBaseUrl } from "./constants";
 import { Util } from "./util";
 
 // https://github.com/shanalikhan/code-settings-sync/blob/master/src/service/github.oauth.service.ts
@@ -9,7 +9,7 @@ export const authenticate = () => {
   const server = app.listen(54321);
   vscode.commands.executeCommand(
     "vscode.open",
-    vscode.Uri.parse(`https://bowl.azurewebsites.net/auth/github`)
+    vscode.Uri.parse(`${apiBaseUrl}/auth/github`)
   );
   app.get("/callback/:token/:refreshToken", async (req, res) => {
     const { token, refreshToken } = req.params;

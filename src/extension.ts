@@ -8,9 +8,12 @@ import { incPlaybackCounter, playback } from "./documentPlayback";
 import { RecordingStatus } from "./status";
 import { StorySidebarProvider } from "./StorySidebarProvider";
 import { Util } from "./util";
+import { FlairProvider } from "./FlairProvider";
 
 export function activate(context: vscode.ExtensionContext) {
   Util.context = context;
+  FlairProvider.extensionUri = context.extensionUri;
+  FlairProvider.init();
 
   // const statusBarItem = vscode.window.createStatusBarItem(
   //   vscode.StatusBarAlignment.Right
@@ -21,22 +24,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   vscode.commands.registerCommand("stories.setFlair", () => {
     vscode.window
-      .showQuickPick([
-        "vanilla js",
-        "flutter",
-        "react",
-        "vue",
-        "angular",
-        "python",
-        "dart",
-        "java",
-        "c",
-        "cpp",
-        "cSharp",
-        "kotlin",
-        "go",
-        "swift",
-      ])
+      .showQuickPick(["vanilla js", ...Object.keys(FlairProvider.flairMap)])
       .then((flair) => {
         if (flair) {
           mutationNoErr("/update-flair", {

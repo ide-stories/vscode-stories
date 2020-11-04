@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
+import { apiBaseUrl } from "./constants";
+import { FlairProvider } from "./FlairProvider";
 import { getNonce } from "./getNonce";
-import { flairMap } from "./flairMap";
 import { imgMap } from "./imgMap";
 
 export class ViewStoryPanel {
@@ -159,12 +160,8 @@ export class ViewStoryPanel {
 
     this._panel.title = story.creatorUsername;
 
-    if (story.flair in flairMap) {
-      const both = vscode.Uri.joinPath(
-        this._extensionUri,
-        "media",
-        flairMap[story.flair as keyof typeof flairMap]
-      );
+    if (story.flair in FlairProvider.flairUriMap) {
+      const both = FlairProvider.flairUriMap[story.flair];
       this._panel.iconPath = {
         light: both,
         dark: both,
@@ -186,9 +183,9 @@ export class ViewStoryPanel {
 					Use a content security policy to only allow loading images from https or from our extension directory,
 					and only allow scripts that have a specific nonce.
 				-->
-        <meta http-equiv="Content-Security-Policy" content="default-src https://bowl.azurewebsites.net; img-src https: data:; style-src ${
-          webview.cspSource
-        }; script-src 'nonce-${nonce}';">
+        <meta http-equiv="Content-Security-Policy" content="default-src ${apiBaseUrl}; img-src https: data:; style-src ${
+      webview.cspSource
+    }; script-src 'nonce-${nonce}';">
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
 				<link href="${stylesResetUri}" rel="stylesheet">
 				<link href="${stylesMainUri}" rel="stylesheet">

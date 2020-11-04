@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import * as vscode from "vscode";
-import { refreshTokenKey, accessTokenKey } from "./constants";
+import { refreshTokenKey, accessTokenKey, apiBaseUrl } from "./constants";
 import { Util } from "./util";
 
 export const mutationNoErr = async (path: string, body: any) => {
@@ -12,7 +12,7 @@ export const mutationNoErr = async (path: string, body: any) => {
 
 export const mutation = async (path: string, body: any) => {
   try {
-    const r = await fetch("https://bowl.azurewebsites.net" + path, {
+    const r = await fetch(apiBaseUrl + path, {
       method: "POST",
       body: JSON.stringify(body),
       headers: {
