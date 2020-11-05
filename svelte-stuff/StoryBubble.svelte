@@ -77,7 +77,7 @@
     <img alt="avatar" src={creatorAvatarUrl} />
   </div>
   <div class="name-container">
-    <div>{creatorUsername}</div>
+    <div>{creatorUsername.slice(0, 8)}</div>
     {#if flair && flair in flairMap}
       <div class="flair">
         <img alt={`${flair}-flair`} src={flairMap[flair]} />
