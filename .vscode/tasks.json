@@ -23,8 +23,7 @@
 		// },
 		{
 			"type": "npm",
-			"script": "watch",
-			"problemMatcher": "$tsc-watch",
+			"script": "webpack-dev",
 			"isBackground": true,
 			"presentation": {
 				"reveal": "never"

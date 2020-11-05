@@ -1,11 +1,11 @@
-import express from "express";
+import polka from "polka";
 import * as vscode from "vscode";
 import { refreshTokenKey, accessTokenKey, apiBaseUrl } from "./constants";
 import { Util } from "./util";
 
 // https://github.com/shanalikhan/code-settings-sync/blob/master/src/service/github.oauth.service.ts
 export const authenticate = () => {
-  const app = express();
+  const app = polka();
   const server = app.listen(54321);
   vscode.commands.executeCommand(
     "vscode.open",
@@ -14,15 +14,15 @@ export const authenticate = () => {
   app.get("/callback/:token/:refreshToken", async (req, res) => {
     const { token, refreshToken } = req.params;
     if (!token || !refreshToken) {
-      res.send(`ext: something went wrong`);
-      server.close();
+      res.end(`ext: something went wrong`);
+      (app as any).server.close();
       return;
     }
 
     await Util.context.globalState.update(accessTokenKey, token);
     await Util.context.globalState.update(refreshTokenKey, refreshToken);
 
-    res.send(`
+    res.end(`
     <!doctype html>
     <html lang="en">
       <head>
@@ -51,6 +51,6 @@ export const authenticate = () => {
     </html>
     `);
 
-    server.close();
+    (app as any).server.close();
   });
 };
