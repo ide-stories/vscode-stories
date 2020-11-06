@@ -2,7 +2,10 @@
   import { onMount } from "svelte";
 
   import StoryBubble from "./StoryBubble.svelte";
-  import type { TextStoryListItem, TextStoryListResponse } from "./types";
+  import type {
+    TextStoryListItem,
+    TextStoryListResponse,
+  } from "../shared/types";
 
   let loadingState: "initial" | "more" | "refetch" | "ready" = "initial";
 
