@@ -1,10 +1,7 @@
-export const mutation = async (path: string, body: any) => {
+export const query = async (path: string) => {
   try {
     const r = await fetch(apiBaseUrl + path, {
-      method: "POST",
-      body: JSON.stringify(body),
       headers: {
-        "content-type": "application/json",
         "access-token": accessToken,
         "refresh-token": refreshToken,
       },

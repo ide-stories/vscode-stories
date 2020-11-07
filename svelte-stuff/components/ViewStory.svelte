@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { mutation } from "../shared/mutation";
+  import { query } from "../shared/query";
   import type { TextStory } from "../shared/types";
   import TextPlayer from "./TextPlayer.svelte";
 
@@ -9,8 +10,8 @@
   let error: Error | null = null;
   onMount(async () => {
     try {
-      const r = await fetch(`${apiBaseUrl}/text-story/${story.id}`);
-      textStory = (await r.json()).story;
+      const data = await query(`/text-story/${story.id}`);
+      textStory = data.story;
     } catch (err) {
       error = err;
     }

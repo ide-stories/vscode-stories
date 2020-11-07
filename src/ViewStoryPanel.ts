@@ -215,8 +215,8 @@ export class ViewStoryPanel {
         <script nonce="${nonce}">
             const currentUserId = "${currentUserId}";
             const story = JSON.parse('${JSON.stringify(this._story)}');
-            const accessToken = "${Util.getAccessToken()}";
-            const refreshToken = "${Util.getRefreshToken()}";
+            let accessToken = "${Util.getAccessToken()}";
+            let refreshToken = "${Util.getRefreshToken()}";
             const apiBaseUrl = "${apiBaseUrl}";
             const tsvscode = acquireVsCodeApi();
             ${FlairProvider.getJavascriptMapString()}
