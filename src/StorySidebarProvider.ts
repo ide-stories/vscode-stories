@@ -9,6 +9,7 @@ import { Util } from "./util";
 import { DeleteStatus } from "./deleteStatus";
 import { FlairProvider } from "./FlairProvider";
 import { apiBaseUrl } from "./constants";
+import { ViewStoryPanel } from "./ViewStoryPanel";
 
 export class StorySidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
@@ -36,6 +37,10 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
       switch (data.type) {
         case "onStoryPress": {
           if (!data.value) {
+            return;
+          }
+          if (5) {
+            ViewStoryPanel.createOrShow(this._extensionUri, data.value);
             return;
           }
           const storyP = getStoryById(data.value);

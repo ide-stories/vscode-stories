@@ -90,7 +90,7 @@
       {#each stories as story}
         <StoryBubble
           onClick={() => {
-            tsvscode.postMessage({ type: 'onStoryPress', value: story.id });
+            tsvscode.postMessage({ type: 'onStoryPress', value: story });
           }}
           {...story} />
       {/each}

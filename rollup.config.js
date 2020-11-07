@@ -12,13 +12,14 @@ const production = !process.env.ROLLUP_WATCH;
 export default fs
   .readdirSync(path.join(__dirname, "svelte-stuff", "pages"))
   .map((input) => {
+    const name = input.split(".")[0];
     return {
       input: "svelte-stuff/pages/" + input,
       output: {
         sourcemap: true,
         format: "iife",
         name: "app",
-        file: "out/compiled/" + input.replace(".ts", ".js"),
+        file: "out/compiled/" + name + ".js",
       },
       plugins: [
         svelte({
@@ -27,7 +28,7 @@ export default fs
           // we'll extract any component CSS out into
           // a separate file - better for performance
           css: (css) => {
-            css.write("bundle.css");
+            css.write(name + ".css");
           },
           preprocess: sveltePreprocess(),
         }),

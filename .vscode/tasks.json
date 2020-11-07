@@ -3,11 +3,11 @@
 {
 	"version": "2.0.0",
 	"tasks": [
-		{
-			"script": "svelte-build",
-			"label": "svelte-compile",
-			"type": "npm"
-		},
+		// {
+		// 	"script": "svelte-build",
+		// 	"label": "svelte-compile",
+		// 	"type": "npm"
+		// },
 		// {
 		// 	"type": "npm",
 		// 	"script": "dev",
@@ -23,7 +23,7 @@
 		// },
 		{
 			"type": "npm",
-			"script": "webpack-dev",
+			"script": "dev",
 			"isBackground": true,
 			"presentation": {
 				"reveal": "never"
@@ -32,7 +32,7 @@
 				"kind": "build",
 				"isDefault": true
 			},
-			"dependsOn": ["svelte-compile"]
+			// "dependsOn": ["svelte-compile"]
 		}
 	]
 }

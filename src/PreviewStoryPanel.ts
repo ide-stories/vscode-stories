@@ -4,36 +4,42 @@ import { FlairProvider } from "./FlairProvider";
 import { getNonce } from "./getNonce";
 import { Util } from "./util";
 import jwt from "jsonwebtoken";
+import { RecordingSteps } from "./types";
 
-export class ViewStoryPanel {
+type Data = {
+  initRecordingSteps: RecordingSteps;
+  intialText: string;
+};
+
+export class PreviewStoryPanel {
   /**
    * Track the currently panel. Only allow a single panel to exist at a time.
    */
-  public static currentPanel: ViewStoryPanel | undefined;
+  public static currentPanel: PreviewStoryPanel | undefined;
 
-  public static readonly viewType = "viewStory";
+  public static readonly viewType = "previewStory";
 
   private readonly _panel: vscode.WebviewPanel;
   private readonly _extensionUri: vscode.Uri;
-  private _story: any;
+  private _data: Data;
   private _disposables: vscode.Disposable[] = [];
 
-  public static createOrShow(extensionUri: vscode.Uri, story: any) {
+  public static createOrShow(extensionUri: vscode.Uri, _data: Data) {
     const column = vscode.window.activeTextEditor
       ? vscode.window.activeTextEditor.viewColumn
       : undefined;
 
     // If we already have a panel, show it.
-    if (ViewStoryPanel.currentPanel) {
-      ViewStoryPanel.currentPanel._panel.reveal(column);
-      ViewStoryPanel.currentPanel._story = story;
-      ViewStoryPanel.currentPanel._update();
+    if (PreviewStoryPanel.currentPanel) {
+      PreviewStoryPanel.currentPanel._panel.reveal(column);
+      PreviewStoryPanel.currentPanel._data = _data;
+      PreviewStoryPanel.currentPanel._update();
       return;
     }
 
     // Otherwise, create a new panel.
     const panel = vscode.window.createWebviewPanel(
-      ViewStoryPanel.viewType,
+      PreviewStoryPanel.viewType,
       "View Story",
       column || vscode.ViewColumn.One,
       {
@@ -48,33 +54,33 @@ export class ViewStoryPanel {
       }
     );
 
-    ViewStoryPanel.currentPanel = new ViewStoryPanel(
+    PreviewStoryPanel.currentPanel = new PreviewStoryPanel(
       panel,
       extensionUri,
-      story
+      _data
     );
   }
 
   public static revive(
     panel: vscode.WebviewPanel,
     extensionUri: vscode.Uri,
-    story: any
+    _data: Data
   ) {
-    ViewStoryPanel.currentPanel = new ViewStoryPanel(
+    PreviewStoryPanel.currentPanel = new PreviewStoryPanel(
       panel,
       extensionUri,
-      story
+      _data
     );
   }
 
   private constructor(
     panel: vscode.WebviewPanel,
     extensionUri: vscode.Uri,
-    story: string
+    _data: Data
   ) {
     this._panel = panel;
     this._extensionUri = extensionUri;
-    this._story = story;
+    this._data = _data;
 
     // Set the webview's initial html content
     this._update();
@@ -98,7 +104,7 @@ export class ViewStoryPanel {
   }
 
   public dispose() {
-    ViewStoryPanel.currentPanel = undefined;
+    PreviewStoryPanel.currentPanel = undefined;
 
     // Clean up our resources
     this._panel.dispose();
@@ -115,45 +121,17 @@ export class ViewStoryPanel {
     const webview = this._panel.webview;
 
     this._panel.webview.html = this._getHtmlForWebview(webview);
-    webview.onDidReceiveMessage(async (data) => {
-      switch (data.type) {
-        case "close": {
-          vscode.commands.executeCommand("workbench.action.closeActiveEditor");
-          break;
-        }
-        case "onInfo": {
-          if (!data.value) {
-            return;
-          }
-          vscode.window.showInformationMessage(data.value);
-          break;
-        }
-        case "onError": {
-          if (!data.value) {
-            return;
-          }
-          vscode.window.showErrorMessage(data.value);
-          break;
-        }
-        case "tokens": {
-          await Util.context.globalState.update(
-            accessTokenKey,
-            data.accessToken
-          );
-          await Util.context.globalState.update(
-            refreshTokenKey,
-            data.refreshToken
-          );
-          break;
-        }
-      }
-    });
+    // webview.onDidReceiveMessage(async (data) => {});
   }
 
   private _getHtmlForWebview(webview: vscode.Webview) {
     // // And the uri we use to load this script in the webview
     const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "out", "compiled/view-story.js")
+      vscode.Uri.joinPath(
+        this._extensionUri,
+        "out",
+        "compiled/preview-story.js"
+      )
     );
 
     // Local path to css styles
@@ -172,30 +150,15 @@ export class ViewStoryPanel {
     const stylesResetUri = webview.asWebviewUri(styleResetPath);
     const stylesMainUri = webview.asWebviewUri(stylesPathMainPath);
     const cssUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "out", "compiled/view-story.css")
+      vscode.Uri.joinPath(
+        this._extensionUri,
+        "out",
+        "compiled/preview-story.css"
+      )
     );
 
     // Use a nonce to only allow specific scripts to be run
     const nonce = getNonce();
-    const story = this._story;
-
-    this._panel.title = story.creatorUsername;
-
-    if (story.flair in FlairProvider.flairUriMap) {
-      const both = FlairProvider.flairUriMap[story.flair];
-      this._panel.iconPath = {
-        light: both,
-        dark: both,
-      };
-    } else {
-      this._panel.iconPath = undefined;
-    }
-
-    let currentUserId = "";
-    try {
-      const payload: any = jwt.decode(Util.getAccessToken());
-      currentUserId = payload.userId;
-    } catch {}
 
     return `<!DOCTYPE html>
 			<html lang="en">
@@ -213,13 +176,11 @@ export class ViewStoryPanel {
 				<link href="${stylesMainUri}" rel="stylesheet">
         <link href="${cssUri}" rel="stylesheet">
         <script nonce="${nonce}">
-            const currentUserId = "${currentUserId}";
-            const story = JSON.parse('${JSON.stringify(this._story)}');
-            const accessToken = "${Util.getAccessToken()}";
-            const refreshToken = "${Util.getRefreshToken()}";
-            const apiBaseUrl = "${apiBaseUrl}";
+            const initRecordingSteps = ${JSON.stringify(
+              this._data.initRecordingSteps
+            )};
+            const initialText = ${JSON.stringify(this._data.intialText)};
             const tsvscode = acquireVsCodeApi();
-            ${FlairProvider.getJavascriptMapString()}
         </script>
 			</head>
       <body>

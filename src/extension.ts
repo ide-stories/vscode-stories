@@ -9,6 +9,8 @@ import { RecordingStatus } from "./status";
 import { StorySidebarProvider } from "./StorySidebarProvider";
 import { Util } from "./util";
 import { FlairProvider } from "./FlairProvider";
+import { _prod_ } from "./constants";
+import { PreviewStoryPanel } from "./PreviewStoryPanel";
 
 export function activate(context: vscode.ExtensionContext) {
   Util.context = context;
@@ -106,12 +108,32 @@ export function activate(context: vscode.ExtensionContext) {
   const stop = async () => {
     status.stop();
     isRecording = false;
-    const d = await vscode.workspace.openTextDocument({
-      content: startingText,
-      language,
+    // if (!_prod_) {
+    //   const endingText =
+    //     vscode.window.activeTextEditor?.document.getText() || "";
+    //   vscode.env.clipboard
+    //     .writeText(
+    //       `
+    //  startingChunks: [${startingText
+    //    .split("\n")
+    //    .map((x) => `\`${x}\``)
+    //    .join(",")}],
+    //  recordingSteps: ${JSON.stringify(data)},
+    //  endingChunks: [${endingText
+    //    .split("\n")
+    //    .map((x) => `\`${x}\``)
+    //    .join(",")}]
+    //  `
+    //     )
+    //     .then(() => {
+    //       vscode.window.showInformationMessage("copied to clipboard");
+    //     });
+    //   return;
+    // }
+    PreviewStoryPanel.createOrShow(context.extensionUri, {
+      initRecordingSteps: data,
+      intialText: startingText,
     });
-    await vscode.window.showTextDocument(d);
-    playback(data);
     const choice = await vscode.window.showInformationMessage(
       `Your story is ready to go!`,
       "Publish",
