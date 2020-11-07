@@ -1,10 +1,7 @@
 import * as vscode from "vscode";
 import { likeStory } from "./api";
 import { authenticate } from "./authenticate";
-import { DeleteStatus } from "./deleteStatus";
-import { LikeStatus } from "./likeStatus";
 import { mutation, mutationNoErr } from "./mutation";
-import { incPlaybackCounter, playback } from "./documentPlayback";
 import { RecordingStatus } from "./status";
 import { StorySidebarProvider } from "./StorySidebarProvider";
 import { Util } from "./util";
@@ -16,13 +13,6 @@ export function activate(context: vscode.ExtensionContext) {
   Util.context = context;
   FlairProvider.extensionUri = context.extensionUri;
   FlairProvider.init();
-
-  // const statusBarItem = vscode.window.createStatusBarItem(
-  //   vscode.StatusBarAlignment.Right
-  // );
-  // statusBarItem.command = "stories.create";
-  // statusBarItem.text = "$(gist) Create Story";
-  // statusBarItem.show();
 
   vscode.commands.registerCommand("stories.setFlair", () => {
     vscode.window
@@ -40,40 +30,6 @@ export function activate(context: vscode.ExtensionContext) {
       });
   });
   vscode.commands.registerCommand("stories.authenticate", () => authenticate());
-  vscode.commands.registerCommand("stories.like", async () => {
-    if (!Util.isLoggedIn()) {
-      const choice = await vscode.window.showInformationMessage(
-        `You need to login to GitHub to like a story, would you like to continue?`,
-        "Yes",
-        "Cancel"
-      );
-      if (choice === "Yes") {
-        authenticate();
-      }
-      return;
-    }
-
-    if (LikeStatus.storyId) {
-      LikeStatus.loading();
-      const newLikes = LikeStatus.likes + 1;
-      await likeStory(LikeStatus.storyId, newLikes);
-      LikeStatus.setLikes(newLikes);
-    }
-  });
-  vscode.commands.registerCommand("stories.delete", async () => {
-    if (DeleteStatus.storyId) {
-      DeleteStatus.loading();
-      try {
-        await mutation("/delete-text-story/" + DeleteStatus.storyId, {});
-        vscode.window.showInformationMessage(
-          `Delete successful, but the story is still showing because I'm too lazy to clear the cache atm`
-        );
-        DeleteStatus.doneLoading(true);
-      } catch {
-        DeleteStatus.doneLoading(false);
-      }
-    }
-  });
 
   const provider = new StorySidebarProvider(context.extensionUri);
   context.subscriptions.push(
@@ -215,11 +171,6 @@ export function activate(context: vscode.ExtensionContext) {
     // }, 30000);
   });
 
-  context.subscriptions.push(
-    vscode.workspace.onDidOpenTextDocument(() => {
-      incPlaybackCounter();
-    })
-  );
   vscode.commands.registerCommand("stories.stopTextRecording", () => stop());
 
   context.subscriptions.push(

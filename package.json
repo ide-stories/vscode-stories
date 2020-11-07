@@ -21,8 +21,6 @@
     "onCommand:stories.setFlair",
     "onCommand:stories.startTextRecording",
     "onCommand:stories.stopTextRecording",
-    "onCommand:stories.like",
-    "onCommand:stories.delete",
     "onView:stories-full",
     "onView:storiesPanel"
   ],
@@ -65,16 +63,6 @@
         "title": "Stop Text Recording",
         "category": "Stories",
         "command": "stories.stopTextRecording"
-      },
-      {
-        "title": "Like Story",
-        "category": "Stories",
-        "command": "stories.like"
-      },
-      {
-        "title": "Delete Story",
-        "category": "Stories",
-        "command": "stories.delete"
       }
     ],
     "viewsContainers": {

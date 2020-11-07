@@ -1,14 +1,7 @@
 import * as vscode from "vscode";
-import { getStoryById } from "./api";
-import { getNonce } from "./getNonce";
-import { LikeStatus } from "./likeStatus";
-import { playback } from "./documentPlayback";
-import { rehydrateChangeEvent } from "./rehydrate";
-import * as jwt from "jsonwebtoken";
-import { Util } from "./util";
-import { DeleteStatus } from "./deleteStatus";
-import { FlairProvider } from "./FlairProvider";
 import { apiBaseUrl } from "./constants";
+import { FlairProvider } from "./FlairProvider";
+import { getNonce } from "./getNonce";
 import { ViewStoryPanel } from "./ViewStoryPanel";
 
 export class StorySidebarProvider implements vscode.WebviewViewProvider {
@@ -39,73 +32,7 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
           if (!data.value) {
             return;
           }
-          if (5) {
-            ViewStoryPanel.createOrShow(this._extensionUri, data.value);
-            return;
-          }
-          const storyP = getStoryById(data.value);
-          if (!this._doc || !this._doc.isDirty) {
-            this._doc = await vscode.workspace.openTextDocument({
-              content: "Loading...",
-            });
-          }
-          await vscode.window.showTextDocument(this._doc);
-          const story = await storyP;
-          if (story) {
-            await vscode.languages.setTextDocumentLanguage(
-              this._doc!,
-              story.programmingLanguageId
-            );
-            await vscode.window.activeTextEditor?.edit((eb) => {
-              eb.replace(
-                new vscode.Range(0, 0, this._doc!.lineCount, 0),
-                story.text
-              );
-            });
-            try {
-              const payload: any = jwt.decode(Util.getAccessToken());
-              if (
-                payload.userId === "dac7eb0f-808b-4842-b193-5d68cc082609" ||
-                payload.userId === story.creatorId
-              ) {
-                DeleteStatus.createDeleteStatus(story.id);
-              } else {
-                DeleteStatus.hide();
-              }
-            } catch {}
-            LikeStatus.createLikeStatus();
-            LikeStatus.setLikes(
-              story.numLikes,
-              story.hasLiked ? undefined : story.id
-            );
-            if (story.recordingSteps) {
-              while (true) {
-                const canGoAgain = await playback(
-                  story.recordingSteps.map((x: any) => [
-                    x[0],
-                    x[1].map((y: any) => rehydrateChangeEvent(y)),
-                  ])
-                );
-                if (!canGoAgain) {
-                  break;
-                }
-                const choice = await vscode.window.showInformationMessage(
-                  `Would you like the story to play again?`,
-                  "Replay",
-                  "Cancel"
-                );
-                if (choice !== "Replay") {
-                  break;
-                }
-                await vscode.window.activeTextEditor?.edit((eb) => {
-                  eb.replace(
-                    new vscode.Range(0, 0, this._doc!.lineCount, 0),
-                    story.text
-                  );
-                });
-              }
-            }
-          }
+          ViewStoryPanel.createOrShow(this._extensionUri, data.value);
           break;
         }
         case "onError": {
