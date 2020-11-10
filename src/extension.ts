@@ -64,28 +64,6 @@ export function activate(context: vscode.ExtensionContext) {
   const stop = async () => {
     status.stop();
     isRecording = false;
-    // if (!_prod_) {
-    //   const endingText =
-    //     vscode.window.activeTextEditor?.document.getText() || "";
-    //   vscode.env.clipboard
-    //     .writeText(
-    //       `
-    //  startingChunks: [${startingText
-    //    .split("\n")
-    //    .map((x) => `\`${x}\``)
-    //    .join(",")}],
-    //  recordingSteps: ${JSON.stringify(data)},
-    //  endingChunks: [${endingText
-    //    .split("\n")
-    //    .map((x) => `\`${x}\``)
-    //    .join(",")}]
-    //  `
-    //     )
-    //     .then(() => {
-    //       vscode.window.showInformationMessage("copied to clipboard");
-    //     });
-    //   return;
-    // }
     PreviewStoryPanel.createOrShow(context.extensionUri, {
       initRecordingSteps: data,
       intialText: startingText,
