@@ -14,13 +14,11 @@
     align-items: center;
     background-image: linear-gradient(
       45deg,
-      #ffa95f 5%,
-      #f99c4a 15%,
-      #f47838 30%,
-      #e75157 45%,
-      #d92d7a 70%,
-      #cc2a92 80%,
-      #c32e92 95%
+      #00a0f3 15%,
+      #0090d8 35%,
+      #0082d3 50%,
+      #007cc0 65%,
+      #006db4 85%
     );
     box-sizing: border-box;
     display: flex;
