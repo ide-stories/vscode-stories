@@ -1,12 +1,12 @@
 ## Stories for Visual Studio Code
 
-Context: [https://youtu.be/ApR-kNXxLUs](https://youtu.be/ApR-kNXxLUs)
+Context: [https://www.kickstarter.com/projects/rolandbrand/vs-code-stories](https://www.kickstarter.com/projects/rolandbrand/vs-code-stories)
 
 Stories is a simple way of sharing code snippets with other developers.
 
 ## Getting Started
 
-You can download Stories from the [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=benawad.stories).
+You can download Stories from the [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=bar9.stories).
 
 Once you have it, you should see something similar to this:
 
