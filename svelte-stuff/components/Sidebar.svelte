@@ -154,6 +154,12 @@
         load more
       {/if}
       </button>
+      <div style="font-size: 9px; text-align: center; margin-top: -10px;">
+        <p>VSCode stories needs your support: 
+        <a href="https://www.kickstarter.com/projects/rolandbrand/vs-code-stories">Kickstarter Campaign</a> 
+        | Survey for <a href="https://twitter.com/RolandBrand5/status/1328443942485053441">next feature</a>
+        </p>
+      </div>
     {/if}
   {/if}
 </main>

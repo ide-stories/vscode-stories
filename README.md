@@ -24,6 +24,4 @@ And you've just uploaded your very own story!
 
 ## Other code
 
-API: [https://github.com/benawad/vscode-stories-api](https://github.com/benawad/vscode-stories-api)
-
-Serverless Image Uploader: [https://github.com/benawad/vscode-stories-serverless-image-uploader](https://github.com/benawad/vscode-stories-serverless-image-uploader)
+API: [https://github.com/ide-stories/vscode-stories-api](https://github.com/ide-stories/vscode-stories-api)

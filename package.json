@@ -1,14 +1,14 @@
 {
   "name": "stories",
   "displayName": "Stories",
-  "icon": "media/ben-circle.png",
+  "icon": "media/code.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/benawad/vscode-stories"
+    "url": "https://github.com/ide-stories/vscode-stories"
   },
   "description": "Stories for VSCode",
-  "publisher": "benawad",
-  "version": "2.20.0",
+  "publisher": "bar9",
+  "version": "2.21.0",
   "engines": {
     "vscode": "^1.50.0"
   },
