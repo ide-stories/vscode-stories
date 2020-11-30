@@ -95,23 +95,23 @@
     "keybindings": [
       {
         "command": "stories.refresh",
-        "key": "ctrl+alt+s r",
-        "mac": "cmd+alt+s r"
+        "key": "",
+        "mac": ""
       },
       {
         "command": "stories.setFlair",
-        "key": "ctrl+alt+s f",
-        "mac": "cmd+alt+s f"
+        "key": "",
+        "mac": ""
       },
       {
         "command": "stories.startTextRecording",
-        "key": "ctrl+alt+s s",
-        "mac": "cmd+alt+s s"
+        "key": "",
+        "mac": ""
       },
       {
         "command": "stories.stopTextRecording",
-        "key": "ctrl+alt+s q",
-        "mac": "cmd+alt+s q"
+        "key": "",
+        "mac": ""
       }
     ]
   },

@@ -14,19 +14,6 @@ export function activate(context: vscode.ExtensionContext) {
   FlairProvider.extensionUri = context.extensionUri;
   FlairProvider.init();
 
-  let notificationShowed: number = context.globalState.get("notificationShowed") ?? 1;
-  if(notificationShowed < 2) {
-    vscode.window.showInformationMessage(
-      `Now is your opportunity to make Stories awesome - and get a PRO badge! You will only see this once.`,
-      "Back on Kickstarter"
-    ).then((choice) => {
-      if(choice === "Back on Kickstarter"){
-        vscode.commands.executeCommand('vscode.open', vscode.Uri.parse("https://www.kickstarter.com/projects/rolandbrand/vs-code-stories"));
-      }
-    });
-    context.globalState.update("notificationShowed", notificationShowed + 1);
-  }
-
   vscode.commands.registerCommand("stories.setFlair", () => {
     vscode.window
       .showQuickPick(["vanilla js", ...Object.keys(FlairProvider.flairMap)])
