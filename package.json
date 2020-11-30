@@ -8,7 +8,7 @@
   },
   "description": "Stories for VSCode",
   "publisher": "bar9",
-  "version": "2.22.0",
+  "version": "2.22.1",
   "engines": {
     "vscode": "^1.50.0"
   },
