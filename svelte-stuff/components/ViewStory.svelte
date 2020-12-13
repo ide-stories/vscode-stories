@@ -7,15 +7,15 @@
 
   let isLoading = true;
   let textStory: TextStory | null = null;
-  let isFriend = false;
+  let isFriend: boolean = false;
   let error: Error | null = null;
   onMount(async () => {
     try {
       const data = await query(`/text-story/${story.id}`);
       textStory = data.story;
 
-      const friendsData = await query(`/is-friend/${textStory.creatorId}`);
-      isFriend = (friendsData.isFriend !== null) ? true : false;
+      const friendsData = await query(`/is-friend/${data.story.creatorId}`);
+      isFriend = (friendsData.isFriend != null) ? true : false;
     } catch (err) {
       error = err;
     }
