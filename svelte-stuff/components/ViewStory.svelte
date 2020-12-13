@@ -7,11 +7,15 @@
 
   let isLoading = true;
   let textStory: TextStory | null = null;
+  let isFriend: boolean = false;
   let error: Error | null = null;
   onMount(async () => {
     try {
       const data = await query(`/text-story/${story.id}`);
       textStory = data.story;
+
+      const friendsData = await query(`/is-friend/${data.story.creatorId}`);
+      isFriend = (friendsData.isFriend != null) ? true : false;
     } catch (err) {
       error = err;
     }
@@ -54,6 +58,10 @@
     margin-left: 3px;
   }
   .trash {
+    cursor: pointer;
+    margin-left: 10px;
+  }
+  .friend {
     cursor: pointer;
     margin-left: 10px;
   }
@@ -125,6 +133,38 @@
           d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
         <line x1="10" y1="11" x2="10" y2="17" />
         <line x1="14" y1="11" x2="14" y2="17" /></svg>
+    {/if}
+    {#if !isFriend && currentUserId !== textStory.creatorId}
+      <svg
+        on:click={async () => {
+          try {
+            await mutation(`/add-friend/${textStory.creatorId}`, {});
+            isFriend = true;
+          } catch {}
+        }}
+        viewBox="0 0 24 24"
+        width="18"
+        height="18"
+        class="friend"><g>
+          <path d="M0 0h24v24H0V0z" fill="none" />
+          <path
+            fill="white"
+            d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 8c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4zm-6 4c.22-.72 3.31-2 6-2 2.7 0 5.8 1.29 6 2H9zm-3-3v-3h3v-2H6V7H4v3H1v2h3v3z" />
+        </g></svg>
+    {:else if currentUserId !== textStory.creatorId}
+      <svg
+        on:click={async () => {
+          await mutation(`/remove-friend/${textStory.creatorId}`, {});
+          isFriend = false;
+        }}
+        viewBox="0 0 24 24"
+        width="18"
+        height="18"
+        class="friend"><g>
+          <path
+            fill="white"
+            d="M14,8c0-2.21-1.79-4-4-4S6,5.79,6,8s1.79,4,4,4S14,10.21,14,8z M2,18v1c0,0.55,0.45,1,1,1h14c0.55,0,1-0.45,1-1v-1 c0-2.66-5.33-4-8-4S2,15.34,2,18z M18,10h4c0.55,0,1,0.45,1,1v0c0,0.55-0.45,1-1,1h-4c-0.55,0-1-0.45-1-1v0 C17,10.45,17.45,10,18,10z" />
+        </g></svg>
     {/if}
   {/if}
 </div>
