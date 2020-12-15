@@ -85,8 +85,8 @@
             await mutation(`/like-text-story/${textStory.id}`, {});
             textStory.hasLiked = true;
             textStory.numLikes++;
-            likeClickable = true;
           } catch {}
+          likeClickable = true;
         }}
         viewBox="0 0 24 24"
         fill="#fff"
@@ -102,8 +102,8 @@
             await mutation(`/unlike-text-story/${textStory.id}`, {});
             textStory.hasLiked = false;
             textStory.numLikes--;
-            likeClickable = true;
           } catch {}
+          likeClickable = true;
         }}
         viewBox="0 0 24 24"
         fill="rgb(224, 36, 94)"
