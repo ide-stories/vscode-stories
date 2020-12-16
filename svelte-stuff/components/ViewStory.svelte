@@ -82,13 +82,10 @@
         on:click={async () => {
           likeClickable = false;
           try {
+            await mutation(`/like-text-story/${textStory.id}`, {});
             textStory.hasLiked = true;
             textStory.numLikes++;
-            await mutation(`/like-text-story/${textStory.id}`, {});
-          } catch {
-            textStory.hasLiked = false;
-            textStory.numLikes--;
-          }
+          } catch {}
           likeClickable = true;
         }}
         viewBox="0 0 24 24"
@@ -102,13 +99,10 @@
         on:click={async () => {
           likeClickable = false;
           try {
+            await mutation(`/unlike-text-story/${textStory.id}`, {});
             textStory.hasLiked = false;
             textStory.numLikes--;
-            await mutation(`/unlike-text-story/${textStory.id}`, {});
-          } catch {
-            textStory.hasLiked = true;
-            textStory.numLikes++;
-          }
+          } catch {}
           likeClickable = true;
         }}
         viewBox="0 0 24 24"
