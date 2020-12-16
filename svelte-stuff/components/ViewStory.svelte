@@ -77,15 +77,18 @@
     {/if}
   </div>
   {#if textStory}
-    {#if !textStory.hasLiked && likeClickable && currentUserId !== textStory.creatorId}
+    {#if !textStory.hasLiked && likeClickable}
       <svg
         on:click={async () => {
           likeClickable = false;
           try {
-            await mutation(`/like-text-story/${textStory.id}`, {});
             textStory.hasLiked = true;
             textStory.numLikes++;
-          } catch {}
+            await mutation(`/like-text-story/${textStory.id}`, {});
+          } catch {
+            textStory.hasLiked = false;
+            textStory.numLikes--;
+          }
           likeClickable = true;
         }}
         viewBox="0 0 24 24"
@@ -94,15 +97,18 @@
           <path
             d="M12 21.638h-.014C9.403 21.59 1.95 14.856 1.95 8.478c0-3.064 2.525-5.754 5.403-5.754 2.29 0 3.83 1.58 4.646 2.73.814-1.148 2.354-2.73 4.645-2.73 2.88 0 5.404 2.69 5.404 5.755 0 6.376-7.454 13.11-10.037 13.157H12zM7.354 4.225c-2.08 0-3.903 1.988-3.903 4.255 0 5.74 7.034 11.596 8.55 11.658 1.518-.062 8.55-5.917 8.55-11.658 0-2.267-1.823-4.255-3.903-4.255-2.528 0-3.94 2.936-3.952 2.965-.23.562-1.156.562-1.387 0-.014-.03-1.425-2.965-3.954-2.965z" />
         </g></svg>
-    {:else if likeClickable && currentUserId !== textStory.creatorId}
+    {:else if likeClickable}
       <svg
         on:click={async () => {
           likeClickable = false;
           try {
-            await mutation(`/unlike-text-story/${textStory.id}`, {});
             textStory.hasLiked = false;
             textStory.numLikes--;
-          } catch {}
+            await mutation(`/unlike-text-story/${textStory.id}`, {});
+          } catch {
+            textStory.hasLiked = true;
+            textStory.numLikes++;
+          }
           likeClickable = true;
         }}
         viewBox="0 0 24 24"
@@ -111,12 +117,12 @@
           <path
             d="M12 21.638h-.014C9.403 21.59 1.95 14.856 1.95 8.478c0-3.064 2.525-5.754 5.403-5.754 2.29 0 3.83 1.58 4.646 2.73.814-1.148 2.354-2.73 4.645-2.73 2.88 0 5.404 2.69 5.404 5.755 0 6.376-7.454 13.11-10.037 13.157H12z" />
         </g></svg>
-    {:else if (currentUserId === textStory.creatorId && textStory.numLikes === 0) || (!textStory.hasLiked && !likeClickable)}
+    {:else if !textStory.hasLiked && !likeClickable}
       <svg viewBox="0 0 24 24" fill="#fff" class="heart"><g>
           <path
             d="M12 21.638h-.014C9.403 21.59 1.95 14.856 1.95 8.478c0-3.064 2.525-5.754 5.403-5.754 2.29 0 3.83 1.58 4.646 2.73.814-1.148 2.354-2.73 4.645-2.73 2.88 0 5.404 2.69 5.404 5.755 0 6.376-7.454 13.11-10.037 13.157H12zM7.354 4.225c-2.08 0-3.903 1.988-3.903 4.255 0 5.74 7.034 11.596 8.55 11.658 1.518-.062 8.55-5.917 8.55-11.658 0-2.267-1.823-4.255-3.903-4.255-2.528 0-3.94 2.936-3.952 2.965-.23.562-1.156.562-1.387 0-.014-.03-1.425-2.965-3.954-2.965z" />
         </g></svg>
-    {:else if (currentUserId === textStory.creatorId && textStory.numLikes > 1) || (textStory.hasLiked && !likeClickable)}
+    {:else if textStory.hasLiked && !likeClickable}
       <svg viewBox="0 0 24 24" fill="rgb(224, 36, 94)" class="heart"><g>
           <path
             d="M12 21.638h-.014C9.403 21.59 1.95 14.856 1.95 8.478c0-3.064 2.525-5.754 5.403-5.754 2.29 0 3.83 1.58 4.646 2.73.814-1.148 2.354-2.73 4.645-2.73 2.88 0 5.404 2.69 5.404 5.755 0 6.376-7.454 13.11-10.037 13.157H12z" />
