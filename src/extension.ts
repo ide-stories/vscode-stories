@@ -16,7 +16,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   vscode.commands.registerCommand("stories.setFlair", () => {
     vscode.window
-      .showQuickPick(["vanilla js", ...Object.keys(FlairProvider.flairMap)])
+      .showQuickPick(Object.keys(FlairProvider.flairMap))
       .then((flair) => {
         if (flair) {
           mutationNoErr("/update-flair", {
