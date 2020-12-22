@@ -7,8 +7,9 @@
 
 <style>
   :root {
-    --size-avatar: 54px;
+    --size-avatar: 56px;
     --size-border: 2px;
+    --size-flair: 18px;
   }
   .avatar {
     align-items: center;
@@ -63,10 +64,12 @@
   }
 
   .flair {
-    margin-left: 2px;
-    height: 14px;
-    width: 14px;
-    margin-bottom: -3px;
+    margin-top: 13px;
+    margin-left: 25px;
+    height: var(--size-flair);
+    width: var(--size-flair);
+    margin-bottom: -5px;
+    position: absolute;
   }
 </style>
 
@@ -74,12 +77,12 @@
   <div class="avatar has-story">
     <img alt="avatar" src={creatorAvatarUrl} />
   </div>
-  <div class="name-container">
-    <div>{creatorUsername.slice(0, 8)}</div>
+  <div class="flair">
     {#if flair && flair in flairMap}
-      <div class="flair">
-        <img alt={`${flair}-flair`} src={flairMap[flair]} />
-      </div>
+      <img alt={`${flair}-flair`} src={flairMap[flair]} />
     {/if}
+  </div>
+  <div class="name-container">
+    <div>{creatorUsername.slice(0, 11)}</div>
   </div>
 </div>
