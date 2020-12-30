@@ -21,6 +21,8 @@
     "onCommand:stories.setFlair",
     "onCommand:stories.startTextRecording",
     "onCommand:stories.stopTextRecording",
+    "onCommand:stories.startGifRecording",
+    "onCommand:stories.stopGifRecording",
     "onView:stories-full",
     "onView:storiesPanel"
   ],
@@ -63,6 +65,16 @@
         "title": "Stop Text Recording",
         "category": "Stories",
         "command": "stories.stopTextRecording"
+      },
+      {
+        "title": "Start Gif Recording",
+        "category": "Stories",
+        "command": "stories.startGifRecording"
+      },
+      {
+        "title": "Stop Gif Recording",
+        "category": "Stories",
+        "command": "stories.stopGifRecording"
       }
     ],
     "viewsContainers": {
@@ -110,6 +122,16 @@
       },
       {
         "command": "stories.stopTextRecording",
+        "key": "",
+        "mac": ""
+      },
+      {
+        "command": "stories.startGifRecording",
+        "key": "",
+        "mac": ""
+      },
+      {
+        "command": "stories.stopGifRecording",
         "key": "",
         "mac": ""
       }

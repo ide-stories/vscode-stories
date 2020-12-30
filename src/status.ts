@@ -1,3 +1,4 @@
+import { StoryType } from "./types";
 import { window, StatusBarItem, StatusBarAlignment } from "vscode";
 import { Config } from "./config";
 import { sleep } from "./sleep";
@@ -18,8 +19,10 @@ export class RecordingStatus {
   private item: StatusBarItem;
   timeout?: NodeJS.Timer;
   counting = false;
+  storyType = "";
 
-  constructor() {
+  constructor(storyType: StoryType) {
+    this.storyType = storyType;
     this.item = window.createStatusBarItem(StatusBarAlignment.Right);
     this.stop();
     this.item.show();
@@ -36,7 +39,7 @@ export class RecordingStatus {
 
   stop() {
     this.recordingStopped();
-    this.item.command = "stories.startTextRecording";
+    this.item.command = `stories.start${this.storyType}Recording`;
     this.item.text = "$(debug-start) Record Story (beta)";
     this.counting = false;
   }
@@ -65,7 +68,7 @@ export class RecordingStatus {
   }
 
   start() {
-    this.item.command = "stories.stopTextRecording";
+    this.item.command = `stories.stop${this.storyType}Recording`;
     this.item.text = "$(debug-stop) Recording";
 
     const update = this.updateTime.bind(this, this.item.text, Date.now());
@@ -80,7 +83,7 @@ export class RecordingStatus {
       seconds = 3;
     }
 
-    this.item.command = "stories.stopTextRecording";
+    this.item.command = `stories.stop${this.storyType}Recording`;
 
     this.counting = true;
 

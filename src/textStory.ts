@@ -1,3 +1,4 @@
+import { StoryType } from "./types";
 import { StorySidebarProvider } from "./StorySidebarProvider";
 import vscode from "vscode";
 import { RecordingStatus } from "./status";
@@ -17,7 +18,7 @@ export class TextStory {
   private startDate = new Date().getTime();
   private lastDelete = false;
   private lastMs = 0;
-  private status = new RecordingStatus();
+  private status = new RecordingStatus(StoryType.text);
   private context: vscode.ExtensionContext;
   private provider: StorySidebarProvider;
   private provider2: StorySidebarProvider;

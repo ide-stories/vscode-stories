@@ -1,3 +1,4 @@
+import { GifStory } from "./gifStory";
 import { TextStory } from "./textStory";
 import * as vscode from "vscode";
 import { authenticate } from "./authenticate";
@@ -39,7 +40,9 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.window.registerWebviewViewProvider("stories-full", provider2)
   );
 
+  // TODO this needs to be created on the fly based on user config or quick pick selection
   const textStory = new TextStory(context, provider, provider2);
+  const gifStory = new GifStory(context, provider, provider2);
 
   vscode.commands.registerCommand("stories.startTextRecording", async () => {
     textStory.record();
@@ -47,6 +50,14 @@ export function activate(context: vscode.ExtensionContext) {
 
   vscode.commands.registerCommand("stories.stopTextRecording", () =>
     textStory.stop()
+  );
+
+  vscode.commands.registerCommand("stories.startGifRecording", async () => {
+    gifStory.record();
+  });
+
+  vscode.commands.registerCommand("stories.stopGifRecording", () =>
+    gifStory.stop()
   );
 
   vscode.commands.registerCommand("stories.refresh", () => {
