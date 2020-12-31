@@ -35,6 +35,7 @@
     margin: 10px 0px;
     display: flex;
     align-items: center;
+    width: 100%;
   }
 
   .username-and-flair {
@@ -65,6 +66,44 @@
   .friend {
     cursor: pointer;
     margin-left: 10px;
+  }
+  .menu {
+    margin-left: auto;
+    overflow: hidden;
+  }
+  .menu .dropbtn {
+    color: white;
+    margin: 0;
+    font-size: 10px;
+  }
+  .menu:hover .dropbtn {
+    background-color: black;
+    opacity: 0.2;
+  }
+  .menu-content {
+    position: absolute;
+    right: 0;
+    display: none;
+    background-color: #f9f9f9;
+    min-width: 120px;
+    z-index: 1;
+  }
+  .menu-content a {
+    float: none;
+    color: black;
+    padding: 8px 12px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+  }
+  .menu-content a#reportBtn {
+    color: red;
+  }
+  .menu-content a:hover {
+    background-color: #ddd;
+  }
+  .menu:hover .menu-content {
+    display: block;
   }
 </style>
 
@@ -182,6 +221,15 @@
         </g></svg>
     {/if}
   {/if}
+  <div class="menu">
+    <button class="dropbtn">OPTIONS 
+      <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="menu-content">
+      <a href="#">Hide stories</a>
+      <a href="#" id="reportBtn">Report user</a>
+    </div>
+  </div>
 </div>
 
 {#if isLoading}

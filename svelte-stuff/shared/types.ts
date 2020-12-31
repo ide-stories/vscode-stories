@@ -3,6 +3,7 @@ import type { TextDocumentContentChangeEvent } from "vscode";
 export interface TextStoryListItem {
   id: string;
   creatorUsername: string;
+  creatorId: string;
   creatorAvatarUrl: string;
   flair?: string;
 }

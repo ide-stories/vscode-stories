@@ -6,31 +6,49 @@
     TextStoryListItem,
     TextStoryListResponse,
   } from "../shared/types";
+import { query } from "../shared/query";
 
   let loadingState: "initial" | "more" | "refetch" | "ready" = "initial";
 
   let cursor = 0;
   const fetchData = async () => {
     try {
+      const username = await query(`/user/username`);
+
+      const friendRes = await fetch(`${apiBaseUrl}/github/friends/${username[0].username}`);
+      const f = await friendRes.json();
+      const fIds = new Set();
+      f.friendIds.forEach(element => {
+        fIds.add(element); 
+      });
+
       const response = await fetch(
         `${apiBaseUrl}/text-stories/hot` + (cursor ? `/${cursor}` : "")
       );
       const d = await response.json();
       const ids = new Set();
       const newStories = [];
+      const newFriendStories = [];
       if (loadingState !== "refetch") {
         stories.forEach((s) => {
           newStories.push(s);
           ids.add(s.id);
+          if (fIds.has(s.creatorId)) {
+            newFriendStories.push(s);
+          }
         });
       }
       for (const s of d.stories) {
         if (!ids.has(s.id)) {
           newStories.push(s);
           ids.add(s.id);
+          if (fIds.has(s.creatorId)) {
+            newFriendStories.push(s);
+          }
         }
       }
       stories = newStories;
+      friendStories = newFriendStories;
       hasMore = d.hasMore;
       cursor++;
     } catch (err) {
@@ -40,6 +58,7 @@
   };
 
   let stories: TextStoryListItem[] = [];
+  let friendStories: TextStoryListItem[] = [];
   let hasMore = false;
   let error = null;
 
@@ -72,6 +91,12 @@
   }
   button:disabled{
     filter: opacity(0.75);
+  }
+  .caption {
+    margin-top: -5px;
+    text-transform: uppercase;
+    font-size: x-small;
+    text-align: left;
   }
   .story-grid {
     display: grid;
@@ -132,6 +157,18 @@
   {:else if loadingState === 'initial' || loadingState === 'refetch'}
     <p>loading stories...</p>
   {:else}
+    <p class="caption">GitHub Friends</p>
+    <div class="story-grid">
+      {#each friendStories as story}
+        <StoryBubble
+          onClick={() => {
+            tsvscode.postMessage({ type: 'onStoryPress', value: story });
+          }}
+          {...story} />
+      {/each}
+    </div>
+    <hr />
+    <p class="caption">Explore</p>
     <div class="story-grid">
       {#each stories as story}
         <StoryBubble
