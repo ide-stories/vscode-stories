@@ -31,20 +31,22 @@ import { query } from "../shared/query";
       const newFriendStories = [];
       if (loadingState !== "refetch") {
         stories.forEach((s) => {
-          newStories.push(s);
-          ids.add(s.id);
           if (fIds.has(s.creatorId)) {
+            s.creatorIsFriend = true;
             newFriendStories.push(s);
           }
+          newStories.push(s);
+          ids.add(s.id);
         });
       }
       for (const s of d.stories) {
         if (!ids.has(s.id)) {
-          newStories.push(s);
-          ids.add(s.id);
           if (fIds.has(s.creatorId)) {
+            s.creatorIsFriend = true;
             newFriendStories.push(s);
           }
+          newStories.push(s);
+          ids.add(s.id);
         }
       }
       stories = newStories;
@@ -157,17 +159,19 @@ import { query } from "../shared/query";
   {:else if loadingState === 'initial' || loadingState === 'refetch'}
     <p>loading stories...</p>
   {:else}
-    <p class="caption">GitHub Friends</p>
-    <div class="story-grid">
-      {#each friendStories as story}
-        <StoryBubble
-          onClick={() => {
-            tsvscode.postMessage({ type: 'onStoryPress', value: story });
-          }}
-          {...story} />
-      {/each}
-    </div>
-    <hr />
+    {#if friendStories.length > 0}
+      <p class="caption">GitHub Friends</p>
+      <div class="story-grid">
+        {#each friendStories as story}
+          <StoryBubble
+            onClick={() => {
+              tsvscode.postMessage({ type: 'onStoryPress', value: story });
+            }}
+            {...story} />
+        {/each}
+      </div>
+      <hr />
+    {/if}
     <p class="caption">Explore</p>
     <div class="story-grid">
       {#each stories as story}

@@ -15,7 +15,7 @@
       const data = await query(`/text-story/${story.id}`);
       textStory = data.story;
 
-      const friendsData = await query(`/is-friend/${data.story.creatorId}`);
+      const friendsData = await query(`/is-friend/${story.creatorUsername}`);
       isFriend = friendsData.isFriend != null ? true : false;
     } catch (err) {
       error = err;
@@ -68,6 +68,7 @@
     margin-left: 10px;
   }
   .menu {
+    display: none;
     margin-left: auto;
     overflow: hidden;
   }
@@ -192,7 +193,7 @@
       <svg
         on:click={async () => {
           try {
-            await mutation(`/add-friend/${textStory.creatorId}`, {});
+            await mutation(`/add-friend/${story.creatorUsername}`, {});
             isFriend = true;
           } catch {}
         }}
@@ -208,7 +209,7 @@
     {:else if currentUserId !== textStory.creatorId}
       <svg
         on:click={async () => {
-          await mutation(`/remove-friend/${textStory.creatorId}`, {});
+          await mutation(`/remove-friend/${story.creatorUsername}`, {});
           isFriend = false;
         }}
         viewBox="0 0 24 24"
