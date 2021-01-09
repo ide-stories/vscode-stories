@@ -16,7 +16,7 @@
       textStory = data.story;
 
       const friendsData = await query(`/is-friend/${story.creatorUsername}`);
-      isFriend = friendsData.isFriend != null ? true : false;
+      isFriend = friendsData.ok;
     } catch (err) {
       error = err;
     }
