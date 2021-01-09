@@ -13,10 +13,7 @@ import { query } from "../shared/query";
   let cursor = 0;
   const fetchData = async () => {
     try {
-      const username = await query(`/user/username`);
-
-      const friendRes = await fetch(`${apiBaseUrl}/github/friends/${username[0].username}`);
-      const f = await friendRes.json();
+      const f = await query(`/github/friends`);
       const fIds = new Set();
       f.friendIds.forEach(element => {
         fIds.add(element); 
