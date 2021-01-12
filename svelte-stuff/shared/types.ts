@@ -6,7 +6,7 @@ export interface TextStoryListItem {
   creatorId: string;
   creatorAvatarUrl: string;
   flair?: string;
-  creatorIsFriend?: boolean;
+  creatorIsFriend?: boolean | null;
 }
 
 export interface TextStoryListResponse {

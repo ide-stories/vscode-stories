@@ -9,56 +9,73 @@
 import { query } from "../shared/query";
 
   let loadingState: "initial" | "more" | "refetch" | "ready" = "initial";
+  let fLoadingState: "initial" | "more" | "refetch" | "ready" = "initial";
 
   let cursor = 0;
+  let fCursor = 0;
+  let fIds = [];
   const fetchData = async () => {
     try {
-      const f = await query(`/github/friends`);
-      const fIds = new Set();
-      f.friendIds.forEach(element => {
-        fIds.add(element); 
-      });
+      const res = await query(
+        `/text-stories/friends/hot` + (fCursor ? `/${fCursor}/${fIds.join(",")}` : "" )
+      );
+      fIds = res.friendIds;
 
       const response = await fetch(
         `${apiBaseUrl}/text-stories/hot` + (cursor ? `/${cursor}` : "")
       );
       const d = await response.json();
       const ids = new Set();
+      const ids2 = new Set();
       const newStories = [];
       const newFriendStories = [];
       if (loadingState !== "refetch") {
         stories.forEach((s) => {
-          if (fIds.has(s.creatorId)) {
+          if (fIds.includes(s.creatorId)) {
             s.creatorIsFriend = true;
-            newFriendStories.push(s);
           }
           newStories.push(s);
           ids.add(s.id);
         });
       }
+      if (fLoadingState !== "refetch") {
+        friendStories.forEach((s) => {
+          s.creatorIsFriend = true;
+          newFriendStories.push(s);
+          ids2.add(s.id);
+        });
+      }
       for (const s of d.stories) {
         if (!ids.has(s.id)) {
-          if (fIds.has(s.creatorId)) {
+          if (fIds.includes(s.creatorId)) {
             s.creatorIsFriend = true;
-            newFriendStories.push(s);
           }
           newStories.push(s);
           ids.add(s.id);
         }
       }
+      for (const s of res.stories) {
+        if (!ids2.has(s.id)) {
+          s.creatorIsFriend = true;
+          newFriendStories.push(s);
+          ids2.add(s.id);
+        }
+      }
       stories = newStories;
       friendStories = newFriendStories;
       hasMore = d.hasMore;
-      cursor++;
+      hasMoreFriends = res.hasMore;
     } catch (err) {
       error = err;
     }
     loadingState = "ready";
+    fLoadingState = "ready";
   };
 
   let stories: TextStoryListItem[] = [];
   let friendStories: TextStoryListItem[] = [];
   let hasMore = false;
+  let hasMoreFriends = false;
   let error = null;
 
   onMount(async () => {
@@ -76,7 +93,9 @@ import { query } from "../shared/query";
       case "refresh":
         if (loadingState === "ready") {
           cursor = 0;
+          fCursor = 0;
           loadingState = "refetch";
+          fLoadingState = "refetch";
           fetchData();
         }
         break;
@@ -167,6 +186,21 @@ import { query } from "../shared/query";
             {...story} />
         {/each}
       </div>
+      {#if hasMoreFriends}
+        <button
+          disabled={fLoadingState !== 'ready'}
+          on:click={() => {
+            fLoadingState = 'more';
+            fCursor++;
+            fetchData();
+          }}>
+        {#if fLoadingState === 'more'}
+          loading<span class="one">.</span><span class="two">.</span><span class="three">.</span>
+        {:else}
+          load more
+        {/if}
+        </button>
+      {/if}
       <hr />
     {/if}
     <p class="caption">Explore</p>
@@ -184,6 +218,7 @@ import { query } from "../shared/query";
         disabled={loadingState !== 'ready'}
         on:click={() => {
           loadingState = 'more';
+          cursor++;
           fetchData();
         }}>
       {#if loadingState === 'more'}

@@ -3,7 +3,7 @@
   export let creatorUsername;
   export let flair;
   export let onClick;
-  export let creatorIsFriend;
+  export let creatorIsFriend: boolean;
 </script>
 
 <style>
