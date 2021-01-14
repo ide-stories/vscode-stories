@@ -10,13 +10,17 @@
   let isFriend: boolean = false;
   let error: Error | null = null;
   let likeClickable = true;
+  let authenticated = accessToken === "" ? false : true;
+
   onMount(async () => {
     try {
       const data = await query(`/text-story/${story.id}`);
       textStory = data.story;
-
-      const friendsData = await query(`/is-friend/${story.creatorUsername}`);
-      isFriend = friendsData.ok;
+      
+      if (authenticated) {
+        const friendsData = await query(`/is-friend/${story.creatorUsername}`);
+        isFriend = friendsData.ok;
+      }
     } catch (err) {
       error = err;
     }

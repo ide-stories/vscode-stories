@@ -6,29 +6,53 @@
     TextStoryListItem,
     TextStoryListResponse,
   } from "../shared/types";
-import { query } from "../shared/query";
+  import { query } from "../shared/query";
 
   let loadingState: "initial" | "more" | "refetch" | "ready" = "initial";
   let fLoadingState: "initial" | "more" | "refetch" | "ready" = "initial";
 
   let cursor = 0;
   let fCursor = 0;
-  let fIds = [];
-  const fetchData = async () => {
+  let fIds = []; // Has to be global, because the fetchStories function also checks for friends
+  const fetchFriends = async () => {
     try {
-      const res = await query(
+      const response = await query(
         `/text-stories/friends/hot` + (fCursor ? `/${fCursor}/${fIds.join(",")}` : "" )
       );
-      fIds = res.friendIds;
+      fIds = response.friendIds;
+      hasMoreFriends = response.hasMore;
 
+      const friendStoryIds = new Set();
+      const newFriendStories = [];
+      if (fLoadingState !== "refetch") {
+        friendStories.forEach((s) => {
+          s.creatorIsFriend = true;
+          newFriendStories.push(s);
+          friendStoryIds.add(s.id);
+        });
+      }
+      for (const s of response.stories) {
+        if (!friendStoryIds.has(s.id)) {
+          s.creatorIsFriend = true;
+          newFriendStories.push(s);
+          friendStoryIds.add(s.id);
+        }
+      }
+
+      friendStories = newFriendStories;
+    } catch (err) {
+      error = err;
+    }
+    fLoadingState = "ready";
+  }
+  const fetchStories = async () => {
+    try {
       const response = await fetch(
         `${apiBaseUrl}/text-stories/hot` + (cursor ? `/${cursor}` : "")
       );
       const d = await response.json();
       const ids = new Set();
-      const ids2 = new Set();
       const newStories = [];
-      const newFriendStories = [];
       if (loadingState !== "refetch") {
         stories.forEach((s) => {
           if (fIds.includes(s.creatorId)) {
@@ -36,13 +60,6 @@ import { query } from "../shared/query";
           }
           newStories.push(s);
           ids.add(s.id);
-        });
-      }
-      if (fLoadingState !== "refetch") {
-        friendStories.forEach((s) => {
-          s.creatorIsFriend = true;
-          newFriendStories.push(s);
-          ids2.add(s.id);
         });
       }
       for (const s of d.stories) {
@@ -54,22 +71,12 @@ import { query } from "../shared/query";
           ids.add(s.id);
         }
       }
-      for (const s of res.stories) {
-        if (!ids2.has(s.id)) {
-          s.creatorIsFriend = true;
-          newFriendStories.push(s);
-          ids2.add(s.id);
-        }
-      }
       stories = newStories;
-      friendStories = newFriendStories;
       hasMore = d.hasMore;
-      hasMoreFriends = res.hasMore;
     } catch (err) {
       error = err;
     }
     loadingState = "ready";
-    fLoadingState = "ready";
   };
 
   let stories: TextStoryListItem[] = [];
@@ -77,9 +84,13 @@ import { query } from "../shared/query";
   let hasMore = false;
   let hasMoreFriends = false;
   let error = null;
+  let authenticated = accessToken === "" ? false : true;
 
   onMount(async () => {
-    await fetchData();
+    if (authenticated) {
+      await fetchFriends(); // Has to come first, since fIds has to be initialized before fetchStories checks for friends
+    }
+    await fetchStories();
   });
 
   window.addEventListener("message", (event) => {
@@ -94,9 +105,12 @@ import { query } from "../shared/query";
         if (loadingState === "ready") {
           cursor = 0;
           fCursor = 0;
-          loadingState = "refetch";
           fLoadingState = "refetch";
-          fetchData();
+          loadingState = "refetch";
+          if (authenticated) {
+            fetchFriends();
+          }
+          fetchStories();
         }
         break;
     }
@@ -175,7 +189,7 @@ import { query } from "../shared/query";
   {:else if loadingState === 'initial' || loadingState === 'refetch'}
     <p>loading stories...</p>
   {:else}
-    {#if friendStories.length > 0}
+    {#if authenticated && friendStories.length > 0}
       <p class="caption">GitHub Friends</p>
       <div class="story-grid">
         {#each friendStories as story}
@@ -192,7 +206,9 @@ import { query } from "../shared/query";
           on:click={() => {
             fLoadingState = 'more';
             fCursor++;
-            fetchData();
+            if (authenticated) {
+              fetchFriends();
+            }
           }}>
         {#if fLoadingState === 'more'}
           loading<span class="one">.</span><span class="two">.</span><span class="three">.</span>
@@ -219,7 +235,7 @@ import { query } from "../shared/query";
         on:click={() => {
           loadingState = 'more';
           cursor++;
-          fetchData();
+          fetchStories();
         }}>
       {#if loadingState === 'more'}
         loading<span class="one">.</span><span class="two">.</span><span class="three">.</span>
