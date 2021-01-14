@@ -11,8 +11,7 @@ export class Util {
   }
 
   static getAccessToken() {
-    return "";
-    // return this.context.globalState.get<string>(accessTokenKey) || "";
+    return this.context.globalState.get<string>(accessTokenKey) || "";
   }
 
   static isLoggedIn() {
