@@ -16,14 +16,14 @@ Once you have it, you should see `stories` in VSCode similar to this:
 
 ## 2-Step Process to Create your own story
 
-### Step One
+#### Step One
 * You can click the Stories Icon button or open up the panel to access the stories. 
 * Once you have that open up, click on anyone's profile picture, and you'll be shown a snippet of their code of what they're currently working on, thus Stories!
 
 ![stories view](readme-pics/view.png)
 ------------------------
 
-### Step Two
+#### Step Two
 * To upload your own story, click the Create Story button on the bottom right.
 
 ![stories upload](readme-pics/upload.png)
