@@ -1,5 +1,5 @@
 # Stories for Visual Studio Code
---------------------------------------
+
 **`code-peeking-made-easy`**
 --------------------------------------
 [**Stories**](https://marketplace.visualstudio.com/items?itemName=bar9.stories): a cool way of sharing code snippets with other developers.
