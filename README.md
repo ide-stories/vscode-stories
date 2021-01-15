@@ -1,4 +1,7 @@
 # Stories for Visual Studio Code
+[![Latest Release](https://vsmarketplacebadge.apphb.com/version-short/bar9.stories.svg)](https://marketplace.visualstudio.com/items?itemName=bar9.stories)
+[![Installs](https://vsmarketplacebadge.apphb.com/installs/bar9.stories.svg)](https://marketplace.visualstudio.com/items?itemName=bar9.stories)
+[![Rating](https://vsmarketplacebadge.apphb.com/rating-short/bar9.stories.svg)](https://marketplace.visualstudio.com/items?itemName=bar9.stories#review-details)
 
 **`code-peeking-made-easy`**
 --------------------------------------
