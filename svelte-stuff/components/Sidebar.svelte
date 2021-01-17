@@ -190,7 +190,7 @@
     <p>loading stories...</p>
   {:else}
     {#if authenticated && friendStories.length > 0}
-      <p class="caption">GitHub Friends</p>
+      <p class="caption" style="margin-top: -2px;">GitHub Friends</p>
       <div class="story-grid">
         {#each friendStories as story}
           <StoryBubble
