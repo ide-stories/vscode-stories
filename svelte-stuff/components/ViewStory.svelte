@@ -15,10 +15,11 @@
   onMount(async () => {
     try {
       if (authenticated) {
-        const friendsData = await query(`/is-friend/${story.creatorUsername}`);
-        isFriend = friendsData.ok;
+        // const friendsData = await query(`/is-friend/${story.creatorUsername}`);
+        // isFriend = friendsData.ok;
+        isFriend = story.creatorIsFriend;
       }
-      
+
       const data = await query(`/text-story/${story.id}`);
       textStory = data.story;
     } catch (err) {
