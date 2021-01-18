@@ -15,8 +15,6 @@
   onMount(async () => {
     try {
       if (authenticated) {
-        // const friendsData = await query(`/is-friend/${story.creatorUsername}`);
-        // isFriend = friendsData.ok;
         isFriend = story.creatorIsFriend;
       }
 
@@ -199,7 +197,12 @@
         on:click={async () => {
           try {
             await mutation(`/add-friend/${story.creatorUsername}`, {});
-            isFriend = true;
+            const friendsData = await query(`/is-friend/${story.creatorUsername}`);
+            if (friendsData.ok === true) {
+              isFriend = true;
+            } else {
+              tsvscode.postMessage({ type: "onError", value: "Something went wrong! This user might have blocked you." });
+            }
           } catch {}
         }}
         viewBox="0 0 24 24"
