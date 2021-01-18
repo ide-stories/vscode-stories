@@ -1,8 +1,10 @@
 import * as vscode from "vscode";
-import { apiBaseUrl } from "./constants";
+import { accessTokenKey, apiBaseUrl, refreshTokenKey } from "./constants";
 import { FlairProvider } from "./FlairProvider";
 import { getNonce } from "./getNonce";
+import { Util } from "./util";
 import { ViewStoryPanel } from "./ViewStoryPanel";
+import jwt from "jsonwebtoken";
 
 export class StorySidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
@@ -42,6 +44,17 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
           vscode.window.showErrorMessage(data.value);
           break;
         }
+        case "tokens": {
+          await Util.context.globalState.update(
+            accessTokenKey,
+            data.accessToken
+          );
+          await Util.context.globalState.update(
+            refreshTokenKey,
+            data.refreshToken
+          );
+          break;
+        }
       }
     });
   }
@@ -63,6 +76,12 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
     // Use a nonce to only allow a specific script to be run.
     const nonce = getNonce();
 
+    let currentUserId = "";
+    try {
+      const payload: any = jwt.decode(Util.getAccessToken());
+      currentUserId = payload.userId;
+    } catch {}
+
     return `<!DOCTYPE html>
 			<html lang="en">
 			<head>
@@ -79,6 +98,9 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
 				<link href="${styleVSCodeUri}" rel="stylesheet">
         <link href="${styleMainUri}" rel="stylesheet">
         <script nonce="${nonce}">
+            const currentUserId = "${currentUserId}";
+            let accessToken = "${Util.getAccessToken()}";
+            let refreshToken = "${Util.getRefreshToken()}";
             const apiBaseUrl = "${apiBaseUrl}";
             const tsvscode = acquireVsCodeApi();
             ${FlairProvider.getJavascriptMapString()}
