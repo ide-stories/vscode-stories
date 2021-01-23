@@ -3,6 +3,7 @@
   export let creatorUsername;
   export let flair;
   export let onClick;
+  export let creatorIsFriend: boolean;
 </script>
 
 <style>
@@ -28,6 +29,16 @@
     overflow: hidden;
     padding: var(--size-border);
     width: var(--size-avatar);
+  }
+  .avatar#friend {
+    background-image: linear-gradient(
+      45deg,
+      #6f42c1 15%,
+      #683eb5 35%,
+      #6039a8 50%,
+      #59359c 65%,
+      #50308c 85%
+    );
   }
 
   .avatar,
@@ -74,9 +85,15 @@
 </style>
 
 <div on:click={onClick} class="unit">
-  <div class="avatar has-story">
-    <img alt="avatar" src={creatorAvatarUrl} />
-  </div>
+  {#if creatorIsFriend}
+    <div class="avatar has-story" id="friend">
+      <img alt="avatar" src={creatorAvatarUrl} />
+    </div>
+  {:else}
+    <div class="avatar has-story">
+      <img alt="avatar" src={creatorAvatarUrl} />
+    </div>
+  {/if}
   <div class="flair">
     {#if flair && flair in flairMap}
       <img alt={`${flair}-flair`} src={flairMap[flair]} />

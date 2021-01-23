@@ -6,11 +6,46 @@
     TextStoryListItem,
     TextStoryListResponse,
   } from "../shared/types";
+  import { query } from "../shared/query";
 
   let loadingState: "initial" | "more" | "refetch" | "ready" = "initial";
+  let fLoadingState: "initial" | "more" | "refetch" | "ready" = "initial";
 
   let cursor = 0;
-  const fetchData = async () => {
+  let fCursor = 0;
+  let fIds = []; // Has to be global, because the fetchStories function also checks for friends
+  const fetchFriends = async () => {
+    try {
+      const response = await query(
+        `/text-stories/friends/hot` + (fCursor ? `/${fCursor}/${fIds.join(",")}` : "" )
+      );
+      fIds = response.friendIds;
+      hasMoreFriends = response.hasMore;
+
+      const friendStoryIds = new Set();
+      const newFriendStories = [];
+      if (fLoadingState !== "refetch") {
+        friendStories.forEach((s) => {
+          s.creatorIsFriend = true;
+          newFriendStories.push(s);
+          friendStoryIds.add(s.id);
+        });
+      }
+      for (const s of response.stories) {
+        if (!friendStoryIds.has(s.id)) {
+          s.creatorIsFriend = true;
+          newFriendStories.push(s);
+          friendStoryIds.add(s.id);
+        }
+      }
+
+      friendStories = newFriendStories;
+    } catch (err) {
+      error = err;
+    }
+    fLoadingState = "ready";
+  }
+  const fetchStories = async () => {
     try {
       const response = await fetch(
         `${apiBaseUrl}/text-stories/hot` + (cursor ? `/${cursor}` : "")
@@ -20,19 +55,24 @@
       const newStories = [];
       if (loadingState !== "refetch") {
         stories.forEach((s) => {
+          if (fIds.includes(s.creatorId)) {
+            s.creatorIsFriend = true;
+          }
           newStories.push(s);
           ids.add(s.id);
         });
       }
       for (const s of d.stories) {
         if (!ids.has(s.id)) {
+          if (fIds.includes(s.creatorId)) {
+            s.creatorIsFriend = true;
+          }
           newStories.push(s);
           ids.add(s.id);
         }
       }
       stories = newStories;
       hasMore = d.hasMore;
-      cursor++;
     } catch (err) {
       error = err;
     }
@@ -40,11 +80,17 @@
   };
 
   let stories: TextStoryListItem[] = [];
+  let friendStories: TextStoryListItem[] = [];
   let hasMore = false;
+  let hasMoreFriends = false;
   let error = null;
+  let authenticated = accessToken === "" ? false : true;
 
   onMount(async () => {
-    await fetchData();
+    if (authenticated) {
+      await fetchFriends(); // Has to come first, since fIds has to be initialized before fetchStories checks for friends
+    }
+    await fetchStories();
   });
 
   window.addEventListener("message", (event) => {
@@ -58,8 +104,13 @@
       case "refresh":
         if (loadingState === "ready") {
           cursor = 0;
+          fCursor = 0;
+          fLoadingState = "refetch";
           loadingState = "refetch";
-          fetchData();
+          if (authenticated) {
+            fetchFriends();
+          }
+          fetchStories();
         }
         break;
     }
@@ -72,6 +123,12 @@
   }
   button:disabled{
     filter: opacity(0.75);
+  }
+  .caption {
+    margin-top: -5px;
+    text-transform: uppercase;
+    font-size: x-small;
+    text-align: left;
   }
   .story-grid {
     display: grid;
@@ -132,6 +189,37 @@
   {:else if loadingState === 'initial' || loadingState === 'refetch'}
     <p>loading stories...</p>
   {:else}
+    {#if authenticated && friendStories.length > 0}
+      <p class="caption" style="margin-top: -2px;">GitHub Friends</p>
+      <div class="story-grid">
+        {#each friendStories as story}
+          <StoryBubble
+            onClick={() => {
+              tsvscode.postMessage({ type: 'onStoryPress', value: story });
+            }}
+            {...story} />
+        {/each}
+      </div>
+      {#if hasMoreFriends}
+        <button
+          disabled={fLoadingState !== 'ready'}
+          on:click={() => {
+            fLoadingState = 'more';
+            fCursor++;
+            if (authenticated) {
+              fetchFriends();
+            }
+          }}>
+        {#if fLoadingState === 'more'}
+          loading<span class="one">.</span><span class="two">.</span><span class="three">.</span>
+        {:else}
+          load more
+        {/if}
+        </button>
+      {/if}
+      <hr />
+    {/if}
+    <p class="caption">Explore</p>
     <div class="story-grid">
       {#each stories as story}
         <StoryBubble
@@ -146,7 +234,8 @@
         disabled={loadingState !== 'ready'}
         on:click={() => {
           loadingState = 'more';
-          fetchData();
+          cursor++;
+          fetchStories();
         }}>
       {#if loadingState === 'more'}
         loading<span class="one">.</span><span class="two">.</span><span class="three">.</span>

@@ -10,13 +10,16 @@
   let isFriend: boolean = false;
   let error: Error | null = null;
   let likeClickable = true;
+  let authenticated = accessToken === "" ? false : true;
+
   onMount(async () => {
     try {
+      if (authenticated) {
+        isFriend = story.creatorIsFriend;
+      }
+
       const data = await query(`/text-story/${story.id}`);
       textStory = data.story;
-
-      const friendsData = await query(`/is-friend/${data.story.creatorId}`);
-      isFriend = friendsData.isFriend != null ? true : false;
     } catch (err) {
       error = err;
     }
@@ -35,6 +38,7 @@
     margin: 10px 0px;
     display: flex;
     align-items: center;
+    width: 100%;
   }
 
   .username-and-flair {
@@ -65,6 +69,45 @@
   .friend {
     cursor: pointer;
     margin-left: 10px;
+  }
+  .menu {
+    display: none;
+    margin-left: auto;
+    overflow: hidden;
+  }
+  .menu .dropbtn {
+    color: white;
+    margin: 0;
+    font-size: 10px;
+  }
+  .menu:hover .dropbtn {
+    background-color: black;
+    opacity: 0.2;
+  }
+  .menu-content {
+    position: absolute;
+    right: 0;
+    display: none;
+    background-color: #f9f9f9;
+    min-width: 120px;
+    z-index: 1;
+  }
+  .menu-content a {
+    float: none;
+    color: black;
+    padding: 8px 12px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+  }
+  .menu-content a#reportBtn {
+    color: red;
+  }
+  .menu-content a:hover {
+    background-color: #ddd;
+  }
+  .menu:hover .menu-content {
+    display: block;
   }
 </style>
 
@@ -153,8 +196,13 @@
       <svg
         on:click={async () => {
           try {
-            await mutation(`/add-friend/${textStory.creatorId}`, {});
-            isFriend = true;
+            await mutation(`/add-friend/${story.creatorUsername}`, {});
+            const friendsData = await query(`/is-friend/${story.creatorUsername}`);
+            if (friendsData.ok === true) {
+              isFriend = true;
+            } else {
+              tsvscode.postMessage({ type: "onError", value: "Something went wrong! This user might have blocked you." });
+            }
           } catch {}
         }}
         viewBox="0 0 24 24"
@@ -169,7 +217,7 @@
     {:else if currentUserId !== textStory.creatorId}
       <svg
         on:click={async () => {
-          await mutation(`/remove-friend/${textStory.creatorId}`, {});
+          await mutation(`/remove-friend/${story.creatorUsername}`, {});
           isFriend = false;
         }}
         viewBox="0 0 24 24"
@@ -182,6 +230,15 @@
         </g></svg>
     {/if}
   {/if}
+  <div class="menu">
+    <button class="dropbtn">OPTIONS 
+      <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="menu-content">
+      <a href="#">Hide stories</a>
+      <a href="#" id="reportBtn">Report user</a>
+    </div>
+  </div>
 </div>
 
 {#if isLoading}
