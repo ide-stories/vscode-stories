@@ -70,7 +70,7 @@
         {
           "id": "stories-icon",
           "title": "Stories",
-          "icon": "media/circle-s-outline.svg"
+          "icon": "media/stories_logo-White.png"
         }
       ]
     },
@@ -80,7 +80,7 @@
           "type": "webview",
           "id": "stories-full",
           "name": "Stories",
-          "icon": "media/circle-s-outline.svg",
+          "icon": "media/stories_logo-White.png",
           "contextualTitle": "Stories"
         }
       ],
