@@ -1,7 +1,7 @@
 {
   "name": "stories",
   "displayName": "Stories",
-  "icon": "media/code.png",
+  "icon": "media/stories_logo-x.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/ide-stories/vscode-stories"
