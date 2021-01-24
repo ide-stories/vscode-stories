@@ -38,8 +38,8 @@ Once you have it, you should see `stories` in VSCode similar to this:
 
 ## For Enthusiastic Contributors
 
-* Join our **discord**<a href="https://discord.gg/ABpGdRxvaA">
-  <img src="https://img.icons8.com/plasticine/2x/discord-logo.png" alt="drawing" width="40">
+* Join our <a href="https://discord.gg/ABpGdRxvaA">**Discord**
+  <img src="https://img.icons8.com/cute-clipart/2x/discord-new-logo.png" alt="drawing" width="30">
 </a>
 
 * If you are an enthusiastic open-source contributor, do read the guidelines before your PRs.
