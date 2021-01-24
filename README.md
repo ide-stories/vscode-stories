@@ -38,7 +38,7 @@ Once you have it, you should see `stories` in VSCode similar to this:
 
 ## For Enthusiastic Contributors
 
-* Join our [**discord**]<a href="https://discord.gg/ABpGdRxvaA">
+* Join our **discord**<a href="https://discord.gg/ABpGdRxvaA">
   <img src="https://img.icons8.com/plasticine/2x/discord-logo.png" alt="drawing" width="40">
 </a>
 
