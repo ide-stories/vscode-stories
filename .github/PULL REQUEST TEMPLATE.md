@@ -1,4 +1,4 @@
-IF YOU ARE ADDING A NEW FEATURE PLEASE DISCUSS IT IN OUR [Discordserver](https://discord.gg/ABpGdRxvaA) BEFORE ADDING IT.
+IF YOU ARE ADDING A NEW FEATURE PLEASE DISCUSS IT IN OUR [Discordserver](https://discord.gg/ABpGdRxvaA) BEFORE MAKING A PR.
 
 
 <!--- Provide a general summary of your changes in the Title above -->
