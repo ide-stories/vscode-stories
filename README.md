@@ -37,6 +37,7 @@ Once you have it, you should see `stories` in VSCode similar to this:
 ------------------------
 
 ## For Enthusiastic Contributors
+* Join our [discord](https://discord.gg/ABpGdRxvaA)
 * If you are an enthusiastic open-source contributor, do read the guidelines before your PRs.
 * All contributing guidelines are available *(at)* [CONTRIBUTING.md](https://github.com/ide-stories/vscode-stories/blob/master/docs/CONTRIBUTING.md)
 * Other documentations related to troubleshooting is [here](https://github.com/ide-stories/vscode-stories/tree/master/docs)
