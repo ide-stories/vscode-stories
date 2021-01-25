@@ -10,6 +10,8 @@ import { StorySidebarProvider } from "./StorySidebarProvider";
 import { ViewStoryPanel } from "./ViewStoryPanel";
 import { authenticate } from "./authenticate";
 import { Util } from "./util";
+import { apiBaseUrl } from "./constants";
+import path from "path";
 
 export class GifStory {
   private recorder = new Recorder();
@@ -28,14 +30,6 @@ export class GifStory {
     this.provider2 = provider2;
   }
 
-  test1 = () => {
-    console.log("test 1 from gif story");
-  };
-
-  test2 = () => {
-    console.log("test 2 from gif story");
-  };
-
   stop = async () => {
     await new Promise((resolve) => setTimeout(resolve, 125)); // Allows for click to be handled properly
     if (this.status.counting) {
@@ -46,6 +40,19 @@ export class GifStory {
     } else if (this.recorder.running) {
       this.status.stop();
       this.recorder.stop(true);
+    }
+  };
+
+  // https://www.developershome.com/wap/detection/detection.asp?page=httpHeaders
+  private uploadHandler = async (url: string, selectedFile: any) => {
+    try {
+      const response = await fetch(url, {
+        method: "PUT",
+        body: selectedFile,
+        headers: { "Content-Type": "image/gif" },
+      });
+    } catch (error) {
+      console.error("Error:", error);
     }
   };
 
@@ -130,49 +137,64 @@ export class GifStory {
             },
             async () => {
               try {
-                const response = await fetchFile(
-                  "https://stories-video-uploader-apim.azure-api.net/stories-video-uploader/video-uploader",
-                  file
+                // const response = await fetchFile(
+                //   "https://stories-video-uploader-apim.azure-api.net/stories-video-uploader/video-uploader",
+                //   file
+                // );
+                // if (response.status === 413) {
+                //   vscode.window.showErrorMessage(
+                //     "Gif is too large, try recording for a shorter amount of time."
+                //   );
+                //   return;
+                // } else if (response.status !== 200) {
+                //   vscode.window.showErrorMessage(await response.text());
+                //   return;
+                // }
+                // const { token } = await response.json();
+                // const r2 = await fetch(
+                //   "https://bowl.azurewebsites.net/new-story",
+                //   {
+                //     method: "POST",
+                //     body: JSON.stringify({
+                //       token,
+                //       creatorUsername: Config.getConfig("username"),
+                //       creatorAvatarUrl: Config.getConfig("avatarUrl"),
+                //       flair: Config.getConfig("flair"),
+                //     }),
+                //     headers: { "content-type": "application/json" },
+                //   }
+                // );
+                // if (r2.status !== 200) {
+                //   vscode.window.showErrorMessage(await r2.text());
+                //   return;
+                // }
+
+                //console.log(apiBaseUrl);
+                const srcFilename = path.normalize(
+                  "/home/fernandob/Recordings/fab.gif"
                 );
-                if (response.status === 413) {
-                  vscode.window.showErrorMessage(
-                    "Gif is too large, try recording for a shorter amount of time."
-                  );
-                  return;
-                } else if (response.status !== 200) {
-                  vscode.window.showErrorMessage(await response.text());
-                  return;
-                }
-                const { token } = await response.json();
-                const r2 = await fetch(
-                  "https://bowl.azurewebsites.net/new-story",
-                  {
-                    method: "POST",
-                    body: JSON.stringify({
-                      token,
-                      creatorUsername: Config.getConfig("username"),
-                      creatorAvatarUrl: Config.getConfig("avatarUrl"),
-                      flair: Config.getConfig("flair"),
-                    }),
-                    headers: { "content-type": "application/json" },
-                  }
-                );
-                if (r2.status !== 200) {
-                  vscode.window.showErrorMessage(await r2.text());
-                  return;
-                }
-                const story = await r2.json();
-                if (story) {
-                  ViewStoryPanel.createOrShow(this.context.extensionUri, story);
-                  this.provider._view?.webview.postMessage({
-                    command: "new-story",
-                    story,
-                  });
-                  this.provider2._view?.webview.postMessage({
-                    command: "new-story",
-                    story,
-                  });
-                }
+                const filename = fs.readFileSync(file);
+                //const url = "/storage/write/giphy2.gif";
+                await fetch(`${apiBaseUrl}/storage/write/giphy2.gif`) //uuid store in GifStory media id
+                  .then((res) => res.text())
+                  .then((url) => {
+                    console.log(url);
+                    this.uploadHandler(url, filename);
+                  })
+                  .catch((error) => console.error(error));
+
+                // const story = await r2.json();
+                // if (story) {
+                //   ViewStoryPanel.createOrShow(this.context.extensionUri, story);
+                //   this.provider._view?.webview.postMessage({
+                //     command: "new-story",
+                //     story,
+                //   });
+                //   this.provider2._view?.webview.postMessage({
+                //     command: "new-story",
+                //     story,
+                //   });
+                // }
               } catch (err) {
                 vscode.window.showErrorMessage(err.message);
               }
