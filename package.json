@@ -1,14 +1,14 @@
 {
   "name": "stories",
   "displayName": "Stories",
-  "icon": "media/code.png",
+  "icon": "media/logo2.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/ide-stories/vscode-stories"
   },
   "description": "Stories for VSCode",
   "publisher": "bar9",
-  "version": "2.22.1",
+  "version": "2.23.0",
   "engines": {
     "vscode": "^1.50.0"
   },
