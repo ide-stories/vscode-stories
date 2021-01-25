@@ -113,7 +113,17 @@
         "key": "",
         "mac": ""
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Stories",
+      "properties": {
+        "stories.colorscheme": {
+          "type": "string",
+          "default": "rainbow",
+          "enum": ["rainbow", "red", "yellow", "green", "blue", "purple"]
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "rollup -c && webpack --mode production",

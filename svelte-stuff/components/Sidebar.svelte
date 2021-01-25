@@ -16,30 +16,30 @@
   let fIds = []; // Has to be global, because the fetchStories function also checks for friends
   const fetchFriends = async () => {
     try {
-      const response = await query(
-        `/text-stories/friends/hot` + (fCursor ? `/${fCursor}/${fIds.join(",")}` : "" )
-      );
-      fIds = response.friendIds;
-      hasMoreFriends = response.hasMore;
+      // const response = await query(
+      //   `/text-stories/friends/hot` + (fCursor ? `/${fCursor}/${fIds.join(",")}` : "" )
+      // );
+      // fIds = response.friendIds;
+      // hasMoreFriends = response.hasMore;
 
-      const friendStoryIds = new Set();
-      const newFriendStories = [];
-      if (fLoadingState !== "refetch") {
-        friendStories.forEach((s) => {
-          s.creatorIsFriend = true;
-          newFriendStories.push(s);
-          friendStoryIds.add(s.id);
-        });
-      }
-      for (const s of response.stories) {
-        if (!friendStoryIds.has(s.id)) {
-          s.creatorIsFriend = true;
-          newFriendStories.push(s);
-          friendStoryIds.add(s.id);
-        }
-      }
+      // const friendStoryIds = new Set();
+      // const newFriendStories = [];
+      // if (fLoadingState !== "refetch") {
+      //   friendStories.forEach((s) => {
+      //     s.creatorIsFriend = true;
+      //     newFriendStories.push(s);
+      //     friendStoryIds.add(s.id);
+      //   });
+      // }
+      // for (const s of response.stories) {
+      //   if (!friendStoryIds.has(s.id)) {
+      //     s.creatorIsFriend = true;
+      //     newFriendStories.push(s);
+      //     friendStoryIds.add(s.id);
+      //   }
+      // }
 
-      friendStories = newFriendStories;
+      // friendStories = newFriendStories;
     } catch (err) {
       error = err;
     }

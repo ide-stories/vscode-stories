@@ -2,9 +2,8 @@
   export let creatorAvatarUrl;
   export let creatorUsername;
   export let flair;
-  export let onClick;
-  export let creatorIsFriend: boolean;
-</script>
+  export let colorscheme = "blue";
+  export let onClick; export let creatorIsFriend: boolean;</script>
 
 <style>
   :root {
@@ -14,14 +13,6 @@
   }
   .avatar {
     align-items: center;
-    background-image: linear-gradient(
-      45deg,
-      #00a0f3 15%,
-      #0090d8 35%,
-      #0082d3 50%,
-      #007cc0 65%,
-      #006db4 85%
-    );
     box-sizing: border-box;
     display: flex;
     height: var(--size-avatar);
@@ -30,14 +21,55 @@
     padding: var(--size-border);
     width: var(--size-avatar);
   }
+  .avatar-rainbow {
+    background-image: linear-gradient(
+      225deg,
+      #95009b 10%,
+      #f20085 30%,
+      #ffca00 80%
+    );
+  }
+  .avatar-red {
+    background-image: linear-gradient(
+      225deg,
+      red 0%
+      darkred 100%,
+    );
+  }
+  .avatar-yellow {
+    background-image: linear-gradient(
+      225deg,
+      lightyellow 0%
+      yellow 100%,
+    );
+  }
+  .avatar-green {
+    background-image: linear-gradient(
+      225deg,
+      green 0%
+      darkgreen 100%,
+    );
+  }
+  .avatar-blue {
+    background-image: linear-gradient(
+      225deg,
+      #f20085,
+      #ffca00
+    );
+  }
+  .avatar-purple {
+    background-image: linear-gradient(
+      225deg,
+      mediumpurple 0%
+      purple 100%,
+    );
+  }
   .avatar#friend {
     background-image: linear-gradient(
-      45deg,
-      #6f42c1 15%,
-      #683eb5 35%,
-      #6039a8 50%,
-      #59359c 65%,
-      #50308c 85%
+      225deg,
+      #95009b 5%,
+      #f20085 20%,
+      #ffca00 60%
     );
   }
 
@@ -86,11 +118,11 @@
 
 <div on:click={onClick} class="unit">
   {#if creatorIsFriend}
-    <div class="avatar has-story" id="friend">
+    <div class="avatar avatar-{colorscheme} has-story" id="friend">
       <img alt="avatar" src={creatorAvatarUrl} />
     </div>
   {:else}
-    <div class="avatar has-story">
+    <div class="avatar avatar-{colorscheme} has-story">
       <img alt="avatar" src={creatorAvatarUrl} />
     </div>
   {/if}

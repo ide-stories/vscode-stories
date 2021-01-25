@@ -4,6 +4,7 @@ import { FlairProvider } from "./FlairProvider";
 import { getNonce } from "./getNonce";
 import { Util } from "./util";
 import { ViewStoryPanel } from "./ViewStoryPanel";
+import { Config } from "./config";
 import jwt from "jsonwebtoken";
 
 export class StorySidebarProvider implements vscode.WebviewViewProvider {
@@ -72,6 +73,8 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
     const styleVSCodeUri = webview.asWebviewUri(
       vscode.Uri.joinPath(this._extensionUri, "media", "vscode.css")
     );
+
+    const colorscheme = Config.getConfig('colorscheme');
 
     // Use a nonce to only allow a specific script to be run.
     const nonce = getNonce();
