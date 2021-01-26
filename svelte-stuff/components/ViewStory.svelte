@@ -28,6 +28,13 @@
 </script>
 
 <style>
+  a {
+    color:inherit;
+    text-decoration:none;
+  }
+  a:hover {
+    color: #0082d3;
+  }
   .pic {
     height: 32px;
     width: 32px;
@@ -112,9 +119,9 @@
 </style>
 
 <div class="top">
-  <img alt="avatar" class="pic" src={story.creatorAvatarUrl} />
+  <a href="https://github.com/{story.creatorUsername}"><img alt="avatar" class="pic" src={story.creatorAvatarUrl} /></a>
   <div class="username-and-flair">
-    <div class="username">{story.creatorUsername.slice(0, 30)}</div>
+    <div class="username"><a href="https://github.com/{story.creatorUsername}">{story.creatorUsername.slice(0, 30)}</a></div>
     {#if story.flair in flairMap}
       <img class="flair" src={flairMap[story.flair]} />
     {/if}
