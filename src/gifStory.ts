@@ -46,21 +46,21 @@ export class GifStory {
 
   // https://www.developershome.com/wap/detection/detection.asp?page=httpHeaders
   private uploadHandler = async (path: string, file: any) => {
-    try {
-      const response = await fetch(path, {
-        method: "PUT",
-        body: file,
-        headers: { "Content-Type": "image/gif" },
-      });
-    } catch (error) {
-      console.error("Error:", error);
-    }
-
     // try {
-    //   await queryUpload(path, file);
+    //   const response = await fetch(path, {
+    //     method: "PUT",
+    //     body: file,
+    //     headers: { "Content-Type": "image/gif" },
+    //   });
     // } catch (error) {
     //   console.error("Error:", error);
     // }
+
+    try {
+      await queryUpload(path, file);
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   private initRecording = async () => {
@@ -182,8 +182,13 @@ export class GifStory {
                 );
                 const filename = fs.readFileSync(file);
                 //const url = "/storage/write/giphy2.gif";
-                await fetch(`${apiBaseUrl}/storage/write/giphy3.gif`) //uuid store in GifStory media id
-                  .then((res) => res.text())
+                await fetch(`${apiBaseUrl}/storage/write/giphy3.gif`, {
+                  headers: {
+                    "access-token": Util.getAccessToken(),
+                    "refresh-token": Util.getRefreshToken(),
+                  }
+                }) //uuid store in GifStory media id
+                  .then((res) => res.json())
                   .then((url) => {
                     console.log(url);
                     this.uploadHandler(url, filename);

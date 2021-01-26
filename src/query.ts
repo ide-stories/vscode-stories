@@ -43,13 +43,14 @@ export const query = async (path: string) => {
 
 export const queryUpload = async (path: string, file: any) => {
   try {
-    const r = await fetch(apiBaseUrl + path, {
+    if (Util.getAccessToken() === "") {
+      throw new Error("not authenticated!");
+    }
+    const r = await fetch(path, {
       method: "PUT",
       body: file,
       headers: {
-        "access-token": Util.getAccessToken(),
-        "refresh-token": Util.getAccessToken(),
-        "Content-Type": "image/gif",
+        "content-type": "image/gif",
       },
     });
     if (r.status !== 200) {
