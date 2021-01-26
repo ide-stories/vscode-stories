@@ -28,6 +28,21 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
+    "configuration": [
+      {
+        "title": "Stories",
+        "properties": {
+          "stories.ffmpeg-binary": {
+            "description": "FFmpeg Binary Location",
+            "type": "string"
+          },
+          "stories.recording-location": {
+            "description": "Recordings Location",
+            "type": "string"
+          }
+        }
+      }
+    ],
     "menus": {
       "view/title": [
         {
