@@ -12,6 +12,7 @@ import { authenticate } from "./authenticate";
 import { Util } from "./util";
 import { apiBaseUrl } from "./constants";
 import path from "path";
+import { query, queryUpload } from "./query";
 
 export class GifStory {
   private recorder = new Recorder();
@@ -44,16 +45,22 @@ export class GifStory {
   };
 
   // https://www.developershome.com/wap/detection/detection.asp?page=httpHeaders
-  private uploadHandler = async (url: string, selectedFile: any) => {
+  private uploadHandler = async (path: string, file: any) => {
     try {
-      const response = await fetch(url, {
+      const response = await fetch(path, {
         method: "PUT",
-        body: selectedFile,
+        body: file,
         headers: { "Content-Type": "image/gif" },
       });
     } catch (error) {
       console.error("Error:", error);
     }
+
+    // try {
+    //   await queryUpload(path, file);
+    // } catch (error) {
+    //   console.error("Error:", error);
+    // }
   };
 
   private initRecording = async () => {
@@ -175,7 +182,7 @@ export class GifStory {
                 );
                 const filename = fs.readFileSync(file);
                 //const url = "/storage/write/giphy2.gif";
-                await fetch(`${apiBaseUrl}/storage/write/giphy2.gif`) //uuid store in GifStory media id
+                await fetch(`${apiBaseUrl}/storage/write/giphy3.gif`) //uuid store in GifStory media id
                   .then((res) => res.text())
                   .then((url) => {
                     console.log(url);
