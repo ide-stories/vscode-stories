@@ -10,10 +10,38 @@
 
   let loadingState: "initial" | "more" | "refetch" | "ready" = "initial";
   let fLoadingState: "initial" | "more" | "refetch" | "ready" = "initial";
+  let uLoadingState: "initial" | "more" | "refetch" | "ready" = "initial";
 
   let cursor = 0;
   let fCursor = 0;
+  let uCursor = 0;
   let fIds = []; // Has to be global, because the fetchStories function also checks for friends
+  const fetchUserStories = async () => {
+    try {
+      const response = await query(
+        `/user/text-stories` + (uCursor ? `/${uCursor}` : "")
+      );
+      const ids = new Set();
+      const newStories = [];
+      if (uLoadingState !== "refetch") {
+        userStories.forEach((s) => {
+          newStories.push(s);
+          ids.add(s.id);
+        });
+      }
+      for (const s of response.stories) {
+        if (!ids.has(s.id)) {
+          newStories.push(s);
+          ids.add(s.id);
+        }
+      }
+      userStories = newStories;
+      uHasMore = response.hasMore;
+    } catch (err) {
+      error = err;
+    }
+    uLoadingState = "ready";
+  }
   const fetchFriends = async () => {
     try {
       const response = await query(
@@ -81,14 +109,17 @@
 
   let stories: TextStoryListItem[] = [];
   let friendStories: TextStoryListItem[] = [];
+  let userStories: TextStoryListItem[] = [];
   let hasMore = false;
   let hasMoreFriends = false;
+  let uHasMore = false;
   let error = null;
   let authenticated = accessToken === "" ? false : true;
 
   onMount(async () => {
-    if (authenticated) {
-      await fetchFriends(); // Has to come first, since fIds has to be initialized before fetchStories checks for friends
+    if (authenticated) { // Has to come first, since fIds has to be initialized before fetchStories checks for friends
+      await fetchUserStories();
+      await fetchFriends(); 
     }
     await fetchStories();
   });
@@ -99,15 +130,19 @@
       case "new-story":
         if (stories.every((x) => x.id !== message.story.id)) {
           stories = [message.story, ...stories];
+          userStories = [message.story, ...userStories];
         }
         break;
       case "refresh":
         if (loadingState === "ready") {
           cursor = 0;
           fCursor = 0;
+          uCursor = 0;
+          uLoadingState = "refetch";
           fLoadingState = "refetch";
           loadingState = "refetch";
           if (authenticated) {
+            fetchUserStories();
             fetchFriends();
           }
           fetchStories();
@@ -189,6 +224,36 @@
   {:else if loadingState === 'initial' || loadingState === 'refetch'}
     <p>loading stories...</p>
   {:else}
+    {#if authenticated && userStories.length > 0}
+      <p class="caption" style="margin-top: -2px;">Own Stories</p>
+      <div class="story-grid">
+        {#each userStories as story}
+          <StoryBubble
+            onClick={() => {
+              tsvscode.postMessage({ type: 'onStoryPress', value: story });
+            }}
+            {...story} />
+        {/each}
+      </div>
+      {#if uHasMore}
+        <button
+          disabled={uLoadingState !== 'ready'}
+          on:click={() => {
+            uLoadingState = 'more';
+            uCursor++;
+            if (authenticated) {
+              fetchUserStories();
+            }
+          }}>
+        {#if uLoadingState === 'more'}
+          loading<span class="one">.</span><span class="two">.</span><span class="three">.</span>
+        {:else}
+          load more
+        {/if}
+        </button>
+      {/if}
+      <hr />
+    {/if}
     {#if authenticated && friendStories.length > 0}
       <p class="caption" style="margin-top: -2px;">GitHub Friends</p>
       <div class="story-grid">
