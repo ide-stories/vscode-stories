@@ -15,7 +15,7 @@ export const query = async (path: string) => {
     const r = await fetch(apiBaseUrl + path, {
       headers: {
         "access-token": Util.getAccessToken(),
-        "refresh-token": Util.getAccessToken(),
+        "refresh-token": Util.getRefreshToken(),
       },
     });
     if (r.status !== 200) {
@@ -41,6 +41,7 @@ export const query = async (path: string) => {
   }
 };
 
+// https://cloud.google.com/storage/docs/xml-api/reference-headers#xgoogcontentlengthrange
 export const queryUpload = async (path: string, file: any) => {
   try {
     if (Util.getAccessToken() === "") {
@@ -51,6 +52,7 @@ export const queryUpload = async (path: string, file: any) => {
       body: file,
       headers: {
         "content-type": "image/gif",
+        "x-goog-content-length-range": "1,5242880",
       },
     });
     if (r.status !== 200) {
@@ -67,8 +69,8 @@ export const queryUpload = async (path: string, file: any) => {
       //   refreshToken: refreshToken,
       // });
     }
-    const d = await r.json();
-    return d;
+    // const d = await r.json();
+    // return d;
   } catch (err) {
     console.log(err);
     vscode.window.showErrorMessage(err.message);

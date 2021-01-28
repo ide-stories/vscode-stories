@@ -41,6 +41,9 @@ export class Config {
       fps: 15,
       animatedGif: true,
       countdown: 3,
+      // ffmpeg: {
+      //   flags: "-vcodec libx265 -crf 30",
+      // },
     } as RecordingOptions;
   }
 

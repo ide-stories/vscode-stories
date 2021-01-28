@@ -13,6 +13,7 @@ import { Util } from "./util";
 import { apiBaseUrl } from "./constants";
 import path from "path";
 import { query, queryUpload } from "./query";
+import { mutationNoErr } from "./mutation";
 
 export class GifStory {
   private recorder = new Recorder();
@@ -46,16 +47,6 @@ export class GifStory {
 
   // https://www.developershome.com/wap/detection/detection.asp?page=httpHeaders
   private uploadHandler = async (path: string, file: any) => {
-    // try {
-    //   const response = await fetch(path, {
-    //     method: "PUT",
-    //     body: file,
-    //     headers: { "Content-Type": "image/gif" },
-    //   });
-    // } catch (error) {
-    //   console.error("Error:", error);
-    // }
-
     try {
       await queryUpload(path, file);
     } catch (error) {
@@ -111,7 +102,7 @@ export class GifStory {
 
       const opts = await run.output();
       this.status.stop();
-      let file = opts.file;
+      let filename = opts.file;
       await vscode.window.withProgress(
         {
           location: vscode.ProgressLocation.Notification,
@@ -120,12 +111,12 @@ export class GifStory {
         },
         async () => {
           const newOpts = await this.recorder.postProcess(opts);
-          file = newOpts.file;
+          filename = newOpts.file;
         }
       );
       vscode.commands.executeCommand(
         "vscode.open",
-        vscode.Uri.parse("file://" + file)
+        vscode.Uri.parse("file://" + filename)
       );
 
       const choice = await vscode.window.showInformationMessage(
@@ -180,18 +171,31 @@ export class GifStory {
                 const srcFilename = path.normalize(
                   "/home/fernandob/Recordings/fab.gif"
                 );
-                const filename = fs.readFileSync(file);
+                const file = fs.readFileSync(filename);
+                const filestats = fs.statSync(filename);
+                const fileSizeInBytes = filestats.size;
+                const fileSizeLimitInBytes = 5242880; // 5242880 20971520
+                const fileSizeLimitInMB = fileSizeLimitInBytes / (1024 * 1024);
                 //const url = "/storage/write/giphy2.gif";
-                await fetch(`${apiBaseUrl}/storage/write/giphy3.gif`, {
-                  headers: {
-                    "access-token": Util.getAccessToken(),
-                    "refresh-token": Util.getRefreshToken(),
-                  }
-                }) //uuid store in GifStory media id
-                  .then((res) => res.json())
+                await query(`/storage/write/giphy2.gif`) //uuid store in GifStory media id
+                  //.then((res) => res.json())
                   .then((url) => {
                     console.log(url);
-                    this.uploadHandler(url, filename);
+
+                    if (fileSizeInBytes < fileSizeLimitInBytes) {
+                      this.uploadHandler(url, file);
+
+                      mutationNoErr("/new-gif-story", {
+                        filename: "somefile",
+                        mediaId: "456456456",
+                        programmingLanguageId: "fernando",
+                      });
+                    } else {
+                      vscode.window.showErrorMessage(
+                        `File size too big, cloud limit is ${fileSizeLimitInMB} MB, try again.`
+                      );
+                      return;
+                    }
                   })
                   .catch((error) => console.error(error));
 
@@ -212,12 +216,12 @@ export class GifStory {
               }
             }
           );
-          fs.unlinkSync(file);
-          fs.unlinkSync(file.replace(".gif", ".mp4"));
+          fs.unlinkSync(filename);
+          fs.unlinkSync(filename.replace(".gif", ".mp4"));
           break;
         case "Discard":
-          fs.unlinkSync(file);
-          fs.unlinkSync(file.replace(".gif", ".mp4"));
+          fs.unlinkSync(filename);
+          fs.unlinkSync(filename.replace(".gif", ".mp4"));
           break;
       }
     } catch (e) {
