@@ -1,3 +1,12 @@
+---
+name: Bug report
+about: Create a report to help us improve
+title: ''
+labels: ''
+assignees: Suryadevelops
+
+---
+
 Issue tracker is **ONLY** used for reporting bugs. New features should be discussed on our Discord aerver. Please use [stackoverflow](https://stackoverflow.com) for supporting issues.
 
 <!--- Provide a general summary of the issue in the Title above -->
