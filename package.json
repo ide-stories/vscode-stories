@@ -207,6 +207,7 @@
   },
   "dependencies": {
     "@arcsine/screen-recorder": "^0.1.6",
+    "@types/uuid": "^8.3.0",
     "btoa": "^1.2.1",
     "express": "^4.17.1",
     "fastify": "^3.7.0",
@@ -214,6 +215,7 @@
     "jsonwebtoken": "^8.5.1",
     "node-fetch": "^2.6.1",
     "polka": "^0.5.2",
-    "unique-names-generator": "^4.3.1"
+    "unique-names-generator": "^4.3.1",
+    "uuid": "^8.3.2"
   }
 }

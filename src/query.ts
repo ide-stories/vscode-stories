@@ -1,6 +1,11 @@
 import fetch from "node-fetch";
 import * as vscode from "vscode";
-import { refreshTokenKey, accessTokenKey, apiBaseUrl } from "./constants";
+import {
+  refreshTokenKey,
+  accessTokenKey,
+  apiBaseUrl,
+  gifUploadLimit,
+} from "./constants";
 import { Util } from "./util";
 
 export const queryNoErr = async (path: string) => {
@@ -52,7 +57,7 @@ export const queryUpload = async (path: string, file: any) => {
       body: file,
       headers: {
         "content-type": "image/gif",
-        "x-goog-content-length-range": "1,5242880",
+        "x-goog-content-length-range": `1,${gifUploadLimit}`,
       },
     });
     if (r.status !== 200) {

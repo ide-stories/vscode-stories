@@ -1,23 +1,24 @@
 import { StoryType } from "./types";
 import vscode from "vscode";
-import fetch from "node-fetch";
 import * as fs from "fs";
 import { Config } from "./config";
-import { fetchFile } from "./fetchFile";
 import { RecordingStatus } from "./status";
 import { Recorder } from "./recorder";
 import { StorySidebarProvider } from "./StorySidebarProvider";
 import { ViewStoryPanel } from "./ViewStoryPanel";
 import { authenticate } from "./authenticate";
 import { Util } from "./util";
-import { apiBaseUrl } from "./constants";
+import { apiBaseUrl, gifUploadLimit } from "./constants";
 import path from "path";
 import { query, queryUpload } from "./query";
 import { mutationNoErr } from "./mutation";
+import { v4 as uuidv4 } from "uuid";
 
 export class GifStory {
   private recorder = new Recorder();
   private status = new RecordingStatus(StoryType.gif);
+  private textFilename: string | undefined = "untitled";
+  private language: string | undefined = "";
   private context: vscode.ExtensionContext;
   private provider: StorySidebarProvider;
   private provider2: StorySidebarProvider;
@@ -102,7 +103,10 @@ export class GifStory {
 
       const opts = await run.output();
       this.status.stop();
-      let filename = opts.file;
+      let gifFilename = opts.file;
+      this.textFilename = vscode.window.activeTextEditor?.document.fileName;
+      this.language = vscode.window.activeTextEditor?.document.languageId;
+
       await vscode.window.withProgress(
         {
           location: vscode.ProgressLocation.Notification,
@@ -111,12 +115,12 @@ export class GifStory {
         },
         async () => {
           const newOpts = await this.recorder.postProcess(opts);
-          filename = newOpts.file;
+          gifFilename = newOpts.file;
         }
       );
       vscode.commands.executeCommand(
         "vscode.open",
-        vscode.Uri.parse("file://" + filename)
+        vscode.Uri.parse("file://" + gifFilename)
       );
 
       const choice = await vscode.window.showInformationMessage(
@@ -167,32 +171,32 @@ export class GifStory {
                 //   return;
                 // }
 
-                //console.log(apiBaseUrl);
-                const srcFilename = path.normalize(
-                  "/home/fernandob/Recordings/fab.gif"
-                );
-                const file = fs.readFileSync(filename);
-                const filestats = fs.statSync(filename);
-                const fileSizeInBytes = filestats.size;
-                const fileSizeLimitInBytes = 5242880; // 5242880 20971520
-                const fileSizeLimitInMB = fileSizeLimitInBytes / (1024 * 1024);
-                //const url = "/storage/write/giphy2.gif";
-                await query(`/storage/write/giphy2.gif`) //uuid store in GifStory media id
-                  //.then((res) => res.json())
+                // Sanity check to avoid unnecessary uploads
+                // backend api won't take it anyways :)
+                const gifFile = fs.readFileSync(gifFilename);
+                const gifFilestats = fs.statSync(gifFilename);
+                const gifFileSizeInBytes = gifFilestats.size;
+                const gifFileSizeLimitInBytes = gifUploadLimit;
+                const gifFileSizeLimitInMB =
+                  gifFileSizeLimitInBytes / (1024 * 1024);
+                const mediaUUID = uuidv4();
+
+                await query(`/storage/write/${mediaUUID}.gif`)
                   .then((url) => {
                     console.log(url);
+                    console.log(mediaUUID);
 
-                    if (fileSizeInBytes < fileSizeLimitInBytes) {
-                      this.uploadHandler(url, file);
-
+                    if (gifFileSizeInBytes < gifFileSizeLimitInBytes) {
+                      this.uploadHandler(url, gifFile);
+                      console.log(mediaUUID);
                       mutationNoErr("/new-gif-story", {
-                        filename: "somefile",
-                        mediaId: "456456456",
-                        programmingLanguageId: "fernando",
+                        filename: this.textFilename,
+                        mediaId: mediaUUID,
+                        programmingLanguageId: this.language,
                       });
                     } else {
                       vscode.window.showErrorMessage(
-                        `File size too big, cloud limit is ${fileSizeLimitInMB} MB, try again.`
+                        `File size too big, cloud limit is ${gifFileSizeLimitInMB} MB, try again.`
                       );
                       return;
                     }
@@ -216,12 +220,12 @@ export class GifStory {
               }
             }
           );
-          fs.unlinkSync(filename);
-          fs.unlinkSync(filename.replace(".gif", ".mp4"));
+          fs.unlinkSync(gifFilename);
+          fs.unlinkSync(gifFilename.replace(".gif", ".mp4"));
           break;
         case "Discard":
-          fs.unlinkSync(filename);
-          fs.unlinkSync(filename.replace(".gif", ".mp4"));
+          fs.unlinkSync(gifFilename);
+          fs.unlinkSync(gifFilename.replace(".gif", ".mp4"));
           break;
       }
     } catch (e) {
