@@ -1,16 +1,15 @@
-import { StoryType } from "./types";
 import vscode from "vscode";
 import * as fs from "fs";
 import { Config } from "./config";
-import { RecordingStatus } from "./status";
 import { Recorder } from "./recorder";
 import { StorySidebarProvider } from "./StorySidebarProvider";
 import { ViewStoryPanel } from "./ViewStoryPanel";
 import { authenticate } from "./authenticate";
 import { Util } from "./util";
-import { apiBaseUrl, gifUploadLimit } from "./constants";
+import { gifUploadLimit } from "./constants";
 import path from "path";
-import { query, queryUpload } from "./query";
+import { query } from "./query";
+import { cloudUpload } from "./mutation";
 import { mutationNoErr } from "./mutation";
 import { v4 as uuidv4 } from "uuid";
 import { status } from "./extension";
@@ -44,15 +43,6 @@ export class GifStory {
     } else if (this.recorder.running) {
       this.status.stop();
       this.recorder.stop(true);
-    }
-  };
-
-  // https://www.developershome.com/wap/detection/detection.asp?page=httpHeaders
-  private uploadHandler = async (path: string, file: any) => {
-    try {
-      await queryUpload(path, file);
-    } catch (error) {
-      console.error("Error:", error);
     }
   };
 
@@ -111,7 +101,7 @@ export class GifStory {
       await vscode.window.withProgress(
         {
           location: vscode.ProgressLocation.Notification,
-          title: "generating story",
+          title: "Generating story",
           cancellable: false,
         },
         async () => {
@@ -134,44 +124,11 @@ export class GifStory {
           vscode.window.withProgress(
             {
               location: vscode.ProgressLocation.Notification,
-              title:
-                "If you have time to read this message, that means the story is still uploading and I'm using serverless so you probably got a cold start :) Don't hate the coder (Ben), hate the game (serverless).",
+              title: "Uploading to the cloud",
               cancellable: false,
             },
             async () => {
               try {
-                // const response = await fetchFile(
-                //   "https://stories-video-uploader-apim.azure-api.net/stories-video-uploader/video-uploader",
-                //   file
-                // );
-                // if (response.status === 413) {
-                //   vscode.window.showErrorMessage(
-                //     "Gif is too large, try recording for a shorter amount of time."
-                //   );
-                //   return;
-                // } else if (response.status !== 200) {
-                //   vscode.window.showErrorMessage(await response.text());
-                //   return;
-                // }
-                // const { token } = await response.json();
-                // const r2 = await fetch(
-                //   "https://bowl.azurewebsites.net/new-story",
-                //   {
-                //     method: "POST",
-                //     body: JSON.stringify({
-                //       token,
-                //       creatorUsername: Config.getConfig("username"),
-                //       creatorAvatarUrl: Config.getConfig("avatarUrl"),
-                //       flair: Config.getConfig("flair"),
-                //     }),
-                //     headers: { "content-type": "application/json" },
-                //   }
-                // );
-                // if (r2.status !== 200) {
-                //   vscode.window.showErrorMessage(await r2.text());
-                //   return;
-                // }
-
                 // Sanity check to avoid unnecessary uploads
                 // backend api won't take it anyways :)
                 const gifFile = fs.readFileSync(gifFilename);
@@ -181,19 +138,39 @@ export class GifStory {
                 const gifFileSizeLimitInMB =
                   gifFileSizeLimitInBytes / (1024 * 1024);
                 const mediaUUID = uuidv4();
+                let story;
 
+                // Here we get the signedUrl first, if the file size is within range
+                // then a cloud upload is attempted, if that's succesful,
+                // then we update the api database, and lastly
+                // push to story panel
                 await query(`/storage/write/${mediaUUID}.gif`)
-                  .then((url) => {
-                    console.log(url);
-                    console.log(mediaUUID);
-
+                  .then((signedUrl) => {
                     if (gifFileSizeInBytes < gifFileSizeLimitInBytes) {
-                      this.uploadHandler(url, gifFile);
-                      console.log(mediaUUID);
-                      mutationNoErr("/new-gif-story", {
-                        filename: this.textFilename,
-                        mediaId: mediaUUID,
-                        programmingLanguageId: this.language,
+                      cloudUpload(signedUrl, gifFile).then(async () => {
+                        story = await mutationNoErr("/new-gif-story", {
+                          filename: path.basename(this.textFilename as string),
+                          mediaId: mediaUUID,
+                          programmingLanguageId: this.language,
+                        }).catch((error) => {
+                          vscode.window.showErrorMessage(`${error}`);
+                          return;
+                        });
+                        //console.log(story);
+                        if (story) {
+                          ViewStoryPanel.createOrShow(
+                            this.context.extensionUri,
+                            story
+                          );
+                          this.provider._view?.webview.postMessage({
+                            command: "new-story",
+                            story,
+                          });
+                          this.provider2._view?.webview.postMessage({
+                            command: "new-story",
+                            story,
+                          });
+                        }
                       });
                     } else {
                       vscode.window.showErrorMessage(
@@ -203,19 +180,6 @@ export class GifStory {
                     }
                   })
                   .catch((error) => console.error(error));
-
-                // const story = await r2.json();
-                // if (story) {
-                //   ViewStoryPanel.createOrShow(this.context.extensionUri, story);
-                //   this.provider._view?.webview.postMessage({
-                //     command: "new-story",
-                //     story,
-                //   });
-                //   this.provider2._view?.webview.postMessage({
-                //     command: "new-story",
-                //     story,
-                //   });
-                // }
               } catch (err) {
                 vscode.window.showErrorMessage(err.message);
               }

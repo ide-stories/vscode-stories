@@ -39,6 +39,21 @@
           "stories.recording-location": {
             "description": "Recordings Location",
             "type": "string"
+          },
+          "stories.story-type": {
+            "description": "Story Type",
+            "type": "string",
+            "default": "gif",
+            "enum": [
+              "text",
+              "gif",
+              "none"
+            ],
+            "enumDescriptions": [
+              "Recording defaults to text story",
+              "Recording defaults to gif story",
+              "Select story type at runtime with a quick pick selection"
+            ]
           }
         }
       }

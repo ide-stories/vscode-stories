@@ -10,6 +10,7 @@ import { _prod_ } from "./constants";
 import { StoryType } from "./types";
 import { Stats } from "fs";
 import { RecordingStatus } from "./status";
+import { Config } from "./config";
 
 export const status = new RecordingStatus();
 
@@ -45,14 +46,21 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.window.registerWebviewViewProvider("stories-full", provider2)
   );
 
-  // TODO this needs to be created on the fly based on user config or quick pick selection
   const textStory = new TextStory(context, provider, provider2);
   const gifStory = new GifStory(context, provider, provider2);
 
   vscode.commands.registerCommand("stories.startRecording", () => {
-    vscode.window
-      .showQuickPick(["gif", "text"])
-      .then((value) => {
+    const configStoryType = Config.getStoryType();
+    if (configStoryType !== "none") {
+      if (configStoryType === "gif") {
+        status.storyType = StoryType.gif;
+        gifStory.record();
+      } else if (configStoryType === "text") {
+        status.storyType = StoryType.text;
+        textStory.record();
+      }
+    } else {
+      vscode.window.showQuickPick(["gif", "text"]).then((value) => {
         if (value) {
           if (value === "gif") {
             status.storyType = StoryType.gif;
@@ -63,19 +71,12 @@ export function activate(context: vscode.ExtensionContext) {
           }
         }
       });
-  });
-
-  vscode.commands.registerCommand("stories.startTextRecording", async () => {
-    textStory.record();
+    }
   });
 
   vscode.commands.registerCommand("stories.stopTextRecording", () =>
     textStory.stop()
   );
-
-  vscode.commands.registerCommand("stories.startGifRecording", async () => {
-    gifStory.record();
-  });
 
   vscode.commands.registerCommand("stories.stopGifRecording", () =>
     gifStory.stop()

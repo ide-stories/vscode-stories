@@ -1,9 +1,7 @@
-import { StoryType } from "./types";
 import { StorySidebarProvider } from "./StorySidebarProvider";
 import vscode from "vscode";
-import { RecordingStatus } from "./status";
 import { PreviewStoryPanel } from "./PreviewStoryPanel";
-import { mutation, mutationNoErr } from "./mutation";
+import { mutationNoErr } from "./mutation";
 import { authenticate } from "./authenticate";
 import { Util } from "./util";
 import { status } from "./extension";

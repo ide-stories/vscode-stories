@@ -34,6 +34,12 @@ export class Config {
     );
   }
 
+  static getStoryType() {
+    return this.hasConfig("story-type")
+      ? (this.getConfig("story-type") as string)
+      : "";
+  }
+
   static getRecordingDefaults() {
     return {
       // audio: true,
