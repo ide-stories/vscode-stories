@@ -1,5 +1,5 @@
 import { StoryType } from "./types";
-import { window, StatusBarItem, StatusBarAlignment } from "vscode";
+import { window, StatusBarItem, StatusBarAlignment, ExtensionContext } from "vscode";
 import { Config } from "./config";
 import { sleep } from "./sleep";
 
@@ -21,8 +21,7 @@ export class RecordingStatus {
   counting = false;
   storyType = "";
 
-  constructor(storyType: StoryType) {
-    this.storyType = storyType;
+  constructor() {
     this.item = window.createStatusBarItem(StatusBarAlignment.Right);
     this.stop();
     this.item.show();
@@ -39,8 +38,9 @@ export class RecordingStatus {
 
   stop() {
     this.recordingStopped();
+    this.storyType = "";
     this.item.command = `stories.start${this.storyType}Recording`;
-    this.item.text = "$(debug-start) Record Story (beta)";
+    this.item.text = "$(debug-start) Record Story (beta)" + this.storyType;
     this.counting = false;
   }
 

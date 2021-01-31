@@ -13,10 +13,11 @@ import path from "path";
 import { query, queryUpload } from "./query";
 import { mutationNoErr } from "./mutation";
 import { v4 as uuidv4 } from "uuid";
+import { status } from "./extension";
 
 export class GifStory {
   private recorder = new Recorder();
-  private status = new RecordingStatus(StoryType.gif);
+  private status = status;
   private textFilename: string | undefined = "untitled";
   private language: string | undefined = "";
   private context: vscode.ExtensionContext;

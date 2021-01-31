@@ -6,6 +6,7 @@ import { PreviewStoryPanel } from "./PreviewStoryPanel";
 import { mutation, mutationNoErr } from "./mutation";
 import { authenticate } from "./authenticate";
 import { Util } from "./util";
+import { status } from "./extension";
 
 export class TextStory {
   private isRecording = false;
@@ -18,7 +19,7 @@ export class TextStory {
   private startDate = new Date().getTime();
   private lastDelete = false;
   private lastMs = 0;
-  private status = new RecordingStatus(StoryType.text);
+  private status = status;
   private context: vscode.ExtensionContext;
   private provider: StorySidebarProvider;
   private provider2: StorySidebarProvider;

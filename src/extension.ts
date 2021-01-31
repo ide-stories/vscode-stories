@@ -7,6 +7,11 @@ import { StorySidebarProvider } from "./StorySidebarProvider";
 import { Util } from "./util";
 import { FlairProvider } from "./FlairProvider";
 import { _prod_ } from "./constants";
+import { StoryType } from "./types";
+import { Stats } from "fs";
+import { RecordingStatus } from "./status";
+
+export const status = new RecordingStatus();
 
 export function activate(context: vscode.ExtensionContext) {
   Util.context = context;
@@ -43,6 +48,22 @@ export function activate(context: vscode.ExtensionContext) {
   // TODO this needs to be created on the fly based on user config or quick pick selection
   const textStory = new TextStory(context, provider, provider2);
   const gifStory = new GifStory(context, provider, provider2);
+
+  vscode.commands.registerCommand("stories.startRecording", () => {
+    vscode.window
+      .showQuickPick(["gif", "text"])
+      .then((value) => {
+        if (value) {
+          if (value === "gif") {
+            status.storyType = StoryType.gif;
+            gifStory.record();
+          } else if (value === "text") {
+            status.storyType = StoryType.text;
+            textStory.record();
+          }
+        }
+      });
+  });
 
   vscode.commands.registerCommand("stories.startTextRecording", async () => {
     textStory.record();
