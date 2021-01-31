@@ -111,7 +111,7 @@ export class GifStory {
       );
       vscode.commands.executeCommand(
         "vscode.open",
-        vscode.Uri.parse("file://" + gifFilename)
+        vscode.Uri.parse("file://" + vscode.Uri.file(gifFilename).path)
       );
 
       const choice = await vscode.window.showInformationMessage(
