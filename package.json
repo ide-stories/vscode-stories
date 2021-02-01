@@ -23,6 +23,7 @@
     "onCommand:stories.stopTextRecording",
     "onCommand:stories.startGifRecording",
     "onCommand:stories.stopGifRecording",
+    "onCommand:stories.setStoryTypeConfig",
     "onView:stories-full",
     "onView:storiesPanel"
   ],
@@ -43,7 +44,7 @@
           "stories.story-type": {
             "description": "Story Type",
             "type": "string",
-            "default": "gif",
+            "default": "none",
             "enum": [
               "text",
               "gif",
@@ -105,6 +106,11 @@
         "title": "Stop Gif Recording",
         "category": "Stories",
         "command": "stories.stopGifRecording"
+      },
+      {
+        "title": "Set Story Type Config",
+        "category": "Stories",
+        "command": "stories.setStoryTypeConfig"
       }
     ],
     "viewsContainers": {

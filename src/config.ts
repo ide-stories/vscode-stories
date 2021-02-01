@@ -34,6 +34,18 @@ export class Config {
     );
   }
 
+  static showQuickPickAndSetConfig(quickPicks: Array<string>, key: string) {
+    vscode.window.showQuickPick(quickPicks).then((value) => {
+      console.log(value);
+      if (!this.hasConfig(key)) {
+        vscode.window.showErrorMessage(`Config key ${key} does not exists.`);
+      }
+      if (this.hasConfig(key)) {
+        this.setConfig(key, value);
+      }
+    });
+  }
+
   static getStoryType() {
     return this.hasConfig("story-type")
       ? (this.getConfig("story-type") as string)

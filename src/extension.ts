@@ -2,13 +2,12 @@ import { GifStory } from "./gifStory";
 import { TextStory } from "./textStory";
 import * as vscode from "vscode";
 import { authenticate } from "./authenticate";
-import { mutation, mutationNoErr } from "./mutation";
+import { mutationNoErr } from "./mutation";
 import { StorySidebarProvider } from "./StorySidebarProvider";
 import { Util } from "./util";
 import { FlairProvider } from "./FlairProvider";
 import { _prod_ } from "./constants";
 import { StoryType } from "./types";
-import { Stats } from "fs";
 import { RecordingStatus } from "./status";
 import { Config } from "./config";
 
@@ -49,6 +48,10 @@ export function activate(context: vscode.ExtensionContext) {
   const textStory = new TextStory(context, provider, provider2);
   const gifStory = new GifStory(context, provider, provider2);
 
+  vscode.commands.registerCommand("stories.setStoryTypeConfig", () => {
+    Config.showQuickPickAndSetConfig(["gif", "text", "none"], "story-type");
+  });
+
   vscode.commands.registerCommand("stories.startRecording", () => {
     const configStoryType = Config.getStoryType();
     if (configStoryType !== "none") {
@@ -74,9 +77,19 @@ export function activate(context: vscode.ExtensionContext) {
     }
   });
 
+  vscode.commands.registerCommand("stories.startTextRecording", async () => {
+    status.storyType = StoryType.text;
+    textStory.record();
+  });
+
   vscode.commands.registerCommand("stories.stopTextRecording", () =>
     textStory.stop()
   );
+
+  vscode.commands.registerCommand("stories.startGifRecording", async () => {
+    status.storyType = StoryType.gif;
+    gifStory.record();
+  });
 
   vscode.commands.registerCommand("stories.stopGifRecording", () =>
     gifStory.stop()

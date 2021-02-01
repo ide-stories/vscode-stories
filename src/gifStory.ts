@@ -9,8 +9,7 @@ import { Util } from "./util";
 import { gifUploadLimit } from "./constants";
 import path from "path";
 import { query } from "./query";
-import { cloudUpload } from "./mutation";
-import { mutationNoErr } from "./mutation";
+import { cloudUpload, mutationNoErr } from "./mutation";
 import { v4 as uuidv4 } from "uuid";
 import { status } from "./extension";
 
