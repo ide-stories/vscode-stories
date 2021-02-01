@@ -53,4 +53,4 @@ API: [https://github.com/ide-stories/vscode-stories-api](https://github.com/ide-
 
 ## Credits
 
-- Thanks to @JessicaDosseh for her logo contribution
+- Thanks to [JessicaDosseh](https://github.com/JessicaDosseh) for her logo contribution
