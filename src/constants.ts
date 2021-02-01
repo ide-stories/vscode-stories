@@ -4,3 +4,4 @@ export const refreshTokenKey = "@stories/refresh-token" + (_prod_ ? "" : "dev");
 export const apiBaseUrl = _prod_
   ? "https://vscode-stories-295306.uk.r.appspot.com"
   : "http://localhost:8080";
+export const awesomeLogo = "https://github.com/JessicaDosseh";
