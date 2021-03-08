@@ -1,4 +1,4 @@
-## Troubleshoting
+## Troubleshooting
 
 Here's a place to document steps if things are working as expected.
 
