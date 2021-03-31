@@ -2,15 +2,16 @@
   import { onMount } from "svelte";
   import { mutation } from "../shared/mutation";
   import { query } from "../shared/query";
-  import type { TextStory } from "../shared/types";
+  import type { GifStory, TextStory } from "../shared/types";
   import TextPlayer from "./TextPlayer.svelte";
 
   let isLoading = true;
   let textStory: TextStory | null = null;
+  let gifStory: GifStory | null = null;
   let isFriend: boolean = false;
   let error: Error | null = null;
   let likeClickable = true;
-  let authenticated = accessToken === "" ? false : true;
+  let authenticated = isLoggedIn;
 
   onMount(async () => {
     try {
@@ -18,8 +19,14 @@
         isFriend = story.creatorIsFriend;
       }
 
-      const data = await query(`/text-story/${story.id}`);
-      textStory = data.story;
+      var data;
+      if (story.type === "gif") {
+        data = await query(`/gif-story/${story.id}`);
+        gifStory = data.story;
+      } else {
+        data = await query(`/text-story/${story.id}`);
+        textStory = data.story;
+      } 
     } catch (err) {
       error = err;
     }

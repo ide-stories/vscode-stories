@@ -217,6 +217,7 @@ export class ViewStoryPanel {
             const story = JSON.parse('${JSON.stringify(this._story)}');
             let accessToken = "${Util.getAccessToken()}";
             let refreshToken = "${Util.getRefreshToken()}";
+            let isLoggedIn = "${Util.isLoggedIn()}";
             const apiBaseUrl = "${apiBaseUrl}";
             const tsvscode = acquireVsCodeApi();
             ${FlairProvider.getJavascriptMapString()}

@@ -101,6 +101,7 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
             const currentUserId = "${currentUserId}";
             let accessToken = "${Util.getAccessToken()}";
             let refreshToken = "${Util.getRefreshToken()}";
+            let isLoggedIn = "${Util.isLoggedIn()}";
             const apiBaseUrl = "${apiBaseUrl}";
             const tsvscode = acquireVsCodeApi();
             ${FlairProvider.getJavascriptMapString()}
