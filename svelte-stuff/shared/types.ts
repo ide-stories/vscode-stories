@@ -21,7 +21,7 @@ export interface FriendsStoryListResponse {
   hasMore: boolean;
 }
 
-interface Story {
+export interface Story {
   id: string;
   programmingLanguageId: string;
   numLikes: number;
