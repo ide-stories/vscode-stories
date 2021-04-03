@@ -9,6 +9,7 @@ declare global {
   let accessToken: string;
   let refreshToken: string;
   let isLoggedIn: boolean;
+  const gifImg: string;
   const currentUserId: string;
   const initRecordingSteps: TextStory["recordingSteps"];
   const initialText: string;

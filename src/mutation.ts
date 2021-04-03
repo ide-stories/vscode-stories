@@ -12,7 +12,7 @@ export const mutationNoErr = async (path: string, body: any) => {
   try {
     const d = await mutation(path, body);
     return d;
-  } catch {}
+  } catch { }
 };
 
 export const mutation = async (path: string, body: any) => {

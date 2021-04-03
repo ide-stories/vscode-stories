@@ -3,6 +3,7 @@
   import { query } from "../shared/query";
   import type { GifStory, TextStory, StoryListItem } from "../shared/types";
   import TextPlayer from "./TextPlayer.svelte";
+  import GifPlayer from "./GifPlayer.svelte";
   import Menu from "./Menu.svelte";
 
   let incommingStory: StoryListItem = story;
@@ -42,7 +43,14 @@
     {/if}
   </div>
   {#if !isLoading}
-    <Menu storyType={incommingStory.type} {tsvscode} {textStory} {gifStory} {isFriend} creatorUsername={incommingStory.creatorUsername} />
+    <Menu
+      storyType={incommingStory.type}
+      {tsvscode}
+      {textStory}
+      {gifStory}
+      {isFriend}
+      creatorUsername={incommingStory.creatorUsername}
+    />
   {/if}
 </div>
 
@@ -56,6 +64,8 @@
     textChunks={textStory.text.split("\n")}
     recordingSteps={textStory.recordingSteps}
   />
+{:else if gifStory}
+  <GifPlayer gifImg={gifImg}/>
 {:else}
   <p>could not find story</p>
 {/if}
