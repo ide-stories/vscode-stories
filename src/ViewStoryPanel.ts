@@ -18,20 +18,20 @@ export class ViewStoryPanel {
   private readonly _extensionUri: vscode.Uri;
   private _story: any;
   private _disposables: vscode.Disposable[] = [];
-  private _gifImg: string;
+  private _gifImg: string = "";
 
   public static async createOrShow(extensionUri: vscode.Uri, story: any) {
     const column = vscode.window.activeTextEditor
       ? vscode.window.activeTextEditor.viewColumn
       : undefined;
-        
-    let gifImg = "";
+
+    let gifImgTemp = "";
 
     // If we already have a panel, show it.
     if (ViewStoryPanel.currentPanel) {
       ViewStoryPanel.currentPanel._panel.reveal(column);
       ViewStoryPanel.currentPanel._story = story;
-      ViewStoryPanel.currentPanel._gifImg = gifImg;
+      ViewStoryPanel.currentPanel._gifImg = gifImgTemp;
       ViewStoryPanel.currentPanel._update();
       return;
     }
@@ -53,11 +53,57 @@ export class ViewStoryPanel {
       }
     );
 
+    panel.webview.onDidReceiveMessage(async (data) => {
+      switch (data.type) {
+        case "close": {
+          vscode.commands.executeCommand("workbench.action.closeActiveEditor");
+          break;
+        }
+        case "onGif": {
+          if (!data.value) {
+            return;
+          }
+          // If it's a gif story, download it
+          await query(`/storage/read/${data.value}.gif`).then(async (signedUrl) => {
+            await cloudDownload(signedUrl).then(async (buffer) => {
+              this.currentPanel?._update(buffer.toString("base64"));
+            });
+          });
+          break;
+        }
+        case "onInfo": {
+          if (!data.value) {
+            return;
+          }
+          vscode.window.showInformationMessage(data.value);
+          break;
+        }
+        case "onError": {
+          if (!data.value) {
+            return;
+          }
+          vscode.window.showErrorMessage(data.value);
+          break;
+        }
+        case "tokens": {
+          await Util.context.globalState.update(
+            accessTokenKey,
+            data.accessToken
+          );
+          await Util.context.globalState.update(
+            refreshTokenKey,
+            data.refreshToken
+          );
+          break;
+        }
+      }
+    });
+
     ViewStoryPanel.currentPanel = new ViewStoryPanel(
       panel,
       extensionUri,
       story,
-      gifImg
+      gifImgTemp
     );
   }
 
@@ -121,58 +167,13 @@ export class ViewStoryPanel {
     }
   }
 
-  private async _update() {
+  private async _update(gifImage?: string) {
     const webview = this._panel.webview;
-
+    if (gifImage) {
+      this._gifImg = "" + gifImage;
+    }
+    
     this._panel.webview.html = this._getHtmlForWebview(webview);
-    webview.onDidReceiveMessage(async (data) => {
-      switch (data.type) {
-        case "close": {
-          vscode.commands.executeCommand("workbench.action.closeActiveEditor");
-          break;
-        }
-        case "onGif": {
-          if (!data.value) {
-            return;
-          }
-          // If it's a gif story, download it
-          await query(`/gif-story/${data.value}`).then(async (s) => {
-            await query(`/storage/read/${s.story.mediaId}.gif`).then(async (signedUrl) => {
-              await cloudDownload(signedUrl).then(async (buffer) => {
-                this._gifImg = buffer.toString("base64");
-                this._update();
-              });
-            });
-          });
-          break;
-        }
-        case "onInfo": {
-          if (!data.value) {
-            return;
-          }
-          vscode.window.showInformationMessage(data.value);
-          break;
-        }
-        case "onError": {
-          if (!data.value) {
-            return;
-          }
-          vscode.window.showErrorMessage(data.value);
-          break;
-        }
-        case "tokens": {
-          await Util.context.globalState.update(
-            accessTokenKey,
-            data.accessToken
-          );
-          await Util.context.globalState.update(
-            refreshTokenKey,
-            data.refreshToken
-          );
-          break;
-        }
-      }
-    });
   }
 
   private _getHtmlForWebview(webview: vscode.Webview) {
