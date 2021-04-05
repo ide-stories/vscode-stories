@@ -92,14 +92,17 @@
             on:click={async () => {
                 try {
                     if (storyType === "gif") {
-                        await mutation(`/delete-gif-story/${story.id}`, {});
+                        await mutation(
+                            `/delete-gif-story/${story.id}/${gifStory.mediaId}`,
+                            {}
+                        );
                     } else {
                         await mutation("/delete-text-story/" + story.id, {});
                     }
                     tsvscode.postMessage({ type: "close" });
                     tsvscode.postMessage({
                         type: "onInfo",
-                        value: `Delete successful, but the story is still showing because I'm too lazy to clear the cache atm`,
+                        value: `Delete successful, but the story is still showing`,
                     });
                 } catch {}
             }}
@@ -170,6 +173,7 @@
         >
     {/if}
 </div>
+
 <!-- <div class="menu2">
     <button class="dropbtn"
         >OPTIONS
@@ -180,7 +184,6 @@
         <a href="#" id="reportBtn">Report user</a>
     </div>
 </div> -->
-
 <style>
     .menu {
         /* border: 2px solid red; */
