@@ -27,7 +27,7 @@
                 likeClickable = false;
                 try {
                     if (storyType === "gif") {
-                        await mutation(`/like-gif-story/${story.id}`, {});
+                        // await mutation(`/like-gif-story/${story.id}`, {});
                     } else {
                         await mutation(`/like-text-story/${story.id}`, {});
                     }
@@ -51,7 +51,7 @@
                 likeClickable = false;
                 try {
                     if (storyType === "gif") {
-                        await mutation(`/unlike-gif-story/${story.id}`, {});
+                        // await mutation(`/unlike-gif-story/${story.id}`, {});
                     } else {
                         await mutation(`/unlike-text-story/${story.id}`, {});
                     }

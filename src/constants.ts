@@ -8,5 +8,5 @@ export const apiBaseUrl = _prod_
   ? "https://vscode-stories-295306.uk.r.appspot.com"
   : "http://localhost:8080";
 export const gifUploadLimit = 33554432; //32MB
-const cloudBucket = "gif_stories";
+const cloudBucket = "gif-stories";
 export const gifPublicUrl = `https://storage.googleapis.com/${cloudBucket}`;

@@ -23,6 +23,13 @@
       if (incommingStory.type === "gif") {
         data = await query(`/gif-story/${story.id}`);
         gifStory = data.story;
+
+        if (gifImg === "") {
+          tsvscode.postMessage({
+            type: "onGif",
+            value: story.id,
+          });
+        }
       } else {
         data = await query(`/text-story/${story.id}`);
         textStory = data.story;
@@ -65,7 +72,7 @@
     recordingSteps={textStory.recordingSteps}
   />
 {:else if gifStory}
-  <GifPlayer gifImg={gifImg}/>
+  <GifPlayer {gifImg} />
 {:else}
   <p>could not find story</p>
 {/if}

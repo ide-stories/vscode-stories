@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { accessTokenKey, apiBaseUrl, refreshTokenKey } from "./constants";
+import { accessTokenKey, apiBaseUrl, gifPublicUrl, refreshTokenKey } from "./constants";
 import { FlairProvider } from "./FlairProvider";
 import { getNonce } from "./getNonce";
 import { Util } from "./util";
@@ -26,18 +26,6 @@ export class ViewStoryPanel {
       : undefined;
         
     let gifImg = "";
-
-    // If it's a gif story, download it
-    if (story.type === "gif") {
-      await query(`/gif-story/${story.id}`).then(async (s) => {
-        await query(`/storage/read/${s.story.mediaId}.gif`).then(async (signedUrl) => {
-          await cloudDownload(signedUrl).then(async (buffer) => {
-            gifImg = buffer.toString("base64");
-          });
-        });
-      });
-    }
-
 
     // If we already have a panel, show it.
     if (ViewStoryPanel.currentPanel) {
@@ -141,6 +129,21 @@ export class ViewStoryPanel {
       switch (data.type) {
         case "close": {
           vscode.commands.executeCommand("workbench.action.closeActiveEditor");
+          break;
+        }
+        case "onGif": {
+          if (!data.value) {
+            return;
+          }
+          // If it's a gif story, download it
+          await query(`/gif-story/${data.value}`).then(async (s) => {
+            await query(`/storage/read/${s.story.mediaId}.gif`).then(async (signedUrl) => {
+              await cloudDownload(signedUrl).then(async (buffer) => {
+                this._gifImg = buffer.toString("base64");
+                this._update();
+              });
+            });
+          });
           break;
         }
         case "onInfo": {
