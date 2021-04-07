@@ -174,10 +174,11 @@
     ]
   },
   "scripts": {
-    "vscode:prepublish": "rollup -c && webpack --mode production",
+    "vscode:prepublish": "rollup -c && webpack --mode production && yarn run copyArciisineFile",
     "webpack": "webpack --mode development",
     "webpack-dev": "webpack --mode development --watch",
-    "dev": "concurrently \"rollup -c -w\" \"webpack --mode development --watch\"",
+    "copyArciisineFile": "copyfiles -u 4 ./node_modules/@arcsine/win-info/bin/win-info-win32.exe ./node_modules/@arcsine/win-info/bin/win-info-x11.js ./dist/bin",
+    "dev": "concurrently \"rollup -c -w\" \"webpack --mode development --watch\" \"yarn run copyArciisineFile\"",
     "svelte-build": "rollup -c",
     "svelte-dev": "rollup -c -w",
     "start": "sirv public",
@@ -230,6 +231,7 @@
     "@arcsine/screen-recorder": "^0.1.6",
     "@types/uuid": "^8.3.0",
     "btoa": "^1.2.1",
+    "copyfiles": "^2.4.1",
     "express": "^4.17.1",
     "fastify": "^3.7.0",
     "form-data": "^3.0.0",
