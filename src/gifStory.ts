@@ -155,7 +155,7 @@ export class GifStory {
                           vscode.window.showErrorMessage(`${error}`);
                           return;
                         });
-                        //console.log(story);
+                        story.type = "gif";
                         if (story) {
                           ViewStoryPanel.createOrShow(
                             this.context.extensionUri,
