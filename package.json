@@ -16,16 +16,7 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:stories.refresh",
-    "onCommand:stories.authenticate",
-    "onCommand:stories.setFlair",
-    "onCommand:stories.startTextRecording",
-    "onCommand:stories.stopTextRecording",
-    "onCommand:stories.startGifRecording",
-    "onCommand:stories.stopGifRecording",
-    "onCommand:stories.setStoryTypeConfig",
-    "onView:stories-full",
-    "onView:storiesPanel"
+    "onStartupFinished"
   ],
   "main": "./dist/extension.js",
   "contributes": {
