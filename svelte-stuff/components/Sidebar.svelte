@@ -3,7 +3,7 @@
 
   import StoryBubble from "./StoryBubble.svelte";
   import type { FriendsStoryListResponse, StoryListResponse } from "../shared/types";
-  import { fetchFriends, fetchStories } from "../shared/api";
+  import { fetchFriends, fetchStories, fetchUserStories } from "../shared/api";
 
   let loadingState: "initial" | "more" | "refetch" | "ready" = "initial";
   let fLoadingState: "initial" | "more" | "refetch" | "ready" = "initial";
@@ -14,39 +14,10 @@
   let uCursor = 0;
   
   let storyListResponse: StoryListResponse = {stories: [], hasMore: false} as StoryListResponse;
+  let userStoryListResponse: StoryListResponse = {stories: [], hasMore: false} as StoryListResponse;
   let friendsStoryListResponse: FriendsStoryListResponse = {stories: [], friendIds: [], hasMore: false} as FriendsStoryListResponse;
   let error = null;
   let authenticated = isLoggedIn;
-  
-  let userStories: TextStoryListItem[] = [];
-  let uHasMore = false;
-
-  const fetchUserStories = async () => {
-    try {
-      const response = await query(
-        `/stories/user` + (uCursor ? `/${uCursor}` : "")
-      );
-      const ids = new Set();
-      const newStories = [];
-      if (uLoadingState !== "refetch") {
-        userStories.forEach((s) => {
-          newStories.push(s);
-          ids.add(s.id);
-        });
-      }
-      for (const s of response.stories) {
-        if (!ids.has(s.id)) {
-          newStories.push(s);
-          ids.add(s.id);
-        }
-      }
-      userStories = newStories;
-      uHasMore = response.hasMore;
-    } catch (err) {
-      error = err;
-    }
-    uLoadingState = "ready";
-  }
 
   function instanceOfFSLR(data: any): data is FriendsStoryListResponse {
     return 'friendIds' in data;
@@ -55,6 +26,17 @@
   function instanceOfSLR(data: any): data is StoryListResponse {
     return 'stories' in data;
   }
+
+  const fetchOwnStories = async () => {
+    let a = await fetchUserStories(uCursor, uLoadingState, userStoryListResponse);
+    if (instanceOfSLR(a)) {
+      userStoryListResponse = a;
+    } else {
+      error = a;
+    }
+    uLoadingState = "ready";
+  };
+
 
   const fetchFriendStories = async () => {
     let a = await fetchFriends(fCursor, fLoadingState, friendsStoryListResponse);
@@ -78,7 +60,7 @@
 
   onMount(async () => {
     if (authenticated) {
-      await fetchUserStories();
+      await fetchOwnStories();
       await fetchFriendStories(); // Has to come first, since fIds has to be initialized before fetchStories checks for friends
     }
     await fetchExploreStories();
@@ -90,7 +72,7 @@
       case "new-story":
         if (storyListResponse.stories.every((x) => x.id !== message.story.id)) {
           storyListResponse.stories = [message.story, ...storyListResponse.stories];
-          userStories = [message.story, ...userStories];
+          userStoryListResponse.stories = [message.story, ...userStoryListResponse.stories];
         }
         break;
       case "refresh":
@@ -103,7 +85,7 @@
           loadingState = "refetch";
           if (authenticated) {
             fetchFriendStories();
-            fetchUserStories();
+            fetchOwnStories();
           }
           fetchExploreStories();
         }
@@ -118,10 +100,10 @@
   {:else if loadingState === "initial" || loadingState === "refetch"}
     <p>loading stories...</p>
   {:else}
-    {#if authenticated && userStories.length > 0}
+    {#if authenticated && userStoryListResponse.stories.length > 0}
       <p class="caption" style="margin-top: -2px;">Own Stories</p>
       <div class="story-grid">
-        {#each userStories as story}
+        {#each userStoryListResponse.stories as story}
           <StoryBubble
             onClick={() => {
               tsvscode.postMessage({ type: 'onStoryPress', value: story });
@@ -129,14 +111,14 @@
             {...story} />
         {/each}
       </div>
-      {#if uHasMore}
+      {#if userStoryListResponse.hasMore}
         <button
           disabled={uLoadingState !== 'ready'}
           on:click={() => {
             uLoadingState = 'more';
             uCursor++;
             if (authenticated) {
-              fetchUserStories();
+              fetchOwnStories();
             }
           }}>
         {#if uLoadingState === 'more'}

@@ -35,7 +35,7 @@
 </script>
 
 <div class="top">
-  <a href="https://github.com/{story.creatorUsername}"><img alt="avatar" class="pic" src={story.creatorAvatarUrl} /></a>
+  <a class="picLink" href="https://github.com/{story.creatorUsername}"><img alt="avatar" class="pic" src={story.creatorAvatarUrl} /></a>
   <div class="username-and-flair">
     <div class="username"><a href="https://github.com/{story.creatorUsername}">{story.creatorUsername.slice(0, 30)}</a></div>
     {#if story.flair in flairMap}
@@ -78,17 +78,22 @@
   a:hover {
     color: #0082d3;
   }
-  .pic {
-    border-radius: 50%;
-  }
 
   .top {
     /* border: 2px solid red; */
     margin: 10px 0px;
     display: flex;
     align-items: center;
+    justify-content: center;
     width: 100%;
     height: 40px;
+  }
+
+  .top a.picLink .pic {
+    /* border: 2px solid red; */
+    height: 100%;
+    width: 40px;
+    border-radius: 50%;
   }
 
   .username-and-flair {

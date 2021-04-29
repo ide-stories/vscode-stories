@@ -1,6 +1,35 @@
 import { query } from "./query";
 import type { FriendsStoryListResponse, StoryListItem, StoryListResponse } from "./types";
 
+export const fetchUserStories = async (uCursor: number, uLoadingState: string, storiesRes: StoryListResponse): Promise<StoryListResponse | any> => {
+  try {
+    const response = await query(
+      `/stories/user` + (uCursor ? `/${uCursor}` : "")
+    );
+    storiesRes.hasMore = response.hasMore;
+
+    const ids = new Set();
+    const newStories: StoryListItem[] = [];
+    if (uLoadingState !== "refetch") {
+      storiesRes.stories.forEach((s) => {
+        newStories.push(s);
+        ids.add(s.id);
+      });
+    }
+    for (const s of response.stories) {
+      if (!ids.has(s.id)) {
+        newStories.push(s);
+        ids.add(s.id);
+      }
+    }
+
+    storiesRes.stories = newStories;
+  } catch (err) {
+    return err;
+  }
+  return storiesRes;
+};
+
 export const fetchFriends = async (fCursor: number, fLoadingState: string, friendStories: FriendsStoryListResponse): Promise<FriendsStoryListResponse | any> => {
   try {
     const response = await query(
