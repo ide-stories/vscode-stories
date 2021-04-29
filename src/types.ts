@@ -8,4 +8,11 @@ export interface RecordingOptions extends RecOp {
   gifScale: number;
 }
 
-export type RecordingSteps = Array<[number, Array<TextDocumentContentChangeEvent>]>
+export enum StoryType {
+  gif = "Gif",
+  text = "Text",
+}
+
+export type RecordingSteps = Array<
+  [number, Array<TextDocumentContentChangeEvent>]
+>;

@@ -16,16 +16,40 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:stories.refresh",
-    "onCommand:stories.authenticate",
-    "onCommand:stories.setFlair",
-    "onCommand:stories.startTextRecording",
-    "onCommand:stories.stopTextRecording",
-    "onView:stories-full",
-    "onView:storiesPanel"
+    "onStartupFinished"
   ],
   "main": "./dist/extension.js",
   "contributes": {
+    "configuration": [
+      {
+        "title": "Stories",
+        "properties": {
+          "stories.ffmpeg-binary": {
+            "description": "FFmpeg Binary Location",
+            "type": "string"
+          },
+          "stories.recording-location": {
+            "description": "Recordings Location",
+            "type": "string"
+          },
+          "stories.story-type": {
+            "description": "Story Type",
+            "type": "string",
+            "default": "none",
+            "enum": [
+              "text",
+              "gif",
+              "none"
+            ],
+            "enumDescriptions": [
+              "Recording defaults to text story",
+              "Recording defaults to gif story",
+              "Select story type at runtime with a quick pick selection"
+            ]
+          }
+        }
+      }
+    ],
     "menus": {
       "view/title": [
         {
@@ -63,6 +87,21 @@
         "title": "Stop Text Recording",
         "category": "Stories",
         "command": "stories.stopTextRecording"
+      },
+      {
+        "title": "Start Gif Recording",
+        "category": "Stories",
+        "command": "stories.startGifRecording"
+      },
+      {
+        "title": "Stop Gif Recording",
+        "category": "Stories",
+        "command": "stories.stopGifRecording"
+      },
+      {
+        "title": "Set Story Type Config",
+        "category": "Stories",
+        "command": "stories.setStoryTypeConfig"
       }
     ],
     "viewsContainers": {
@@ -112,14 +151,25 @@
         "command": "stories.stopTextRecording",
         "key": "",
         "mac": ""
+      },
+      {
+        "command": "stories.startGifRecording",
+        "key": "",
+        "mac": ""
+      },
+      {
+        "command": "stories.stopGifRecording",
+        "key": "",
+        "mac": ""
       }
     ]
   },
   "scripts": {
-    "vscode:prepublish": "rollup -c && webpack --mode production",
+    "vscode:prepublish": "rollup -c && webpack --mode production && yarn run copyArciisineFile",
     "webpack": "webpack --mode development",
     "webpack-dev": "webpack --mode development --watch",
-    "dev": "concurrently \"rollup -c -w\" \"webpack --mode development --watch\"",
+    "copyArciisineFile": "copyfiles -u 4 ./node_modules/@arcsine/win-info/bin/win-info-win32.exe ./node_modules/@arcsine/win-info/bin/win-info-x11.js ./dist/bin",
+    "dev": "concurrently \"rollup -c -w\" \"webpack --mode development --watch\" \"yarn run copyArciisineFile\"",
     "svelte-build": "rollup -c",
     "svelte-dev": "rollup -c -w",
     "start": "sirv public",
@@ -170,13 +220,16 @@
   },
   "dependencies": {
     "@arcsine/screen-recorder": "^0.1.6",
+    "@types/uuid": "^8.3.0",
     "btoa": "^1.2.1",
+    "copyfiles": "^2.4.1",
     "express": "^4.17.1",
     "fastify": "^3.7.0",
     "form-data": "^3.0.0",
     "jsonwebtoken": "^8.5.1",
     "node-fetch": "^2.6.1",
     "polka": "^0.5.2",
-    "unique-names-generator": "^4.3.1"
+    "unique-names-generator": "^4.3.1",
+    "uuid": "^8.3.2"
   }
 }
