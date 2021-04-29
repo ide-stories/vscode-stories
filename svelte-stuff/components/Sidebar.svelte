@@ -7,14 +7,46 @@
 
   let loadingState: "initial" | "more" | "refetch" | "ready" = "initial";
   let fLoadingState: "initial" | "more" | "refetch" | "ready" = "initial";
+  let uLoadingState: "initial" | "more" | "refetch" | "ready" = "initial";
 
   let cursor = 0;
   let fCursor = 0;
+  let uCursor = 0;
   
   let storyListResponse: StoryListResponse = {stories: [], hasMore: false} as StoryListResponse;
   let friendsStoryListResponse: FriendsStoryListResponse = {stories: [], friendIds: [], hasMore: false} as FriendsStoryListResponse;
   let error = null;
   let authenticated = isLoggedIn;
+  
+  let userStories: TextStoryListItem[] = [];
+  let uHasMore = false;
+
+  const fetchUserStories = async () => {
+    try {
+      const response = await query(
+        `/stories/user` + (uCursor ? `/${uCursor}` : "")
+      );
+      const ids = new Set();
+      const newStories = [];
+      if (uLoadingState !== "refetch") {
+        userStories.forEach((s) => {
+          newStories.push(s);
+          ids.add(s.id);
+        });
+      }
+      for (const s of response.stories) {
+        if (!ids.has(s.id)) {
+          newStories.push(s);
+          ids.add(s.id);
+        }
+      }
+      userStories = newStories;
+      uHasMore = response.hasMore;
+    } catch (err) {
+      error = err;
+    }
+    uLoadingState = "ready";
+  }
 
   function instanceOfFSLR(data: any): data is FriendsStoryListResponse {
     return 'friendIds' in data;
@@ -46,6 +78,7 @@
 
   onMount(async () => {
     if (authenticated) {
+      await fetchUserStories();
       await fetchFriendStories(); // Has to come first, since fIds has to be initialized before fetchStories checks for friends
     }
     await fetchExploreStories();
@@ -57,16 +90,20 @@
       case "new-story":
         if (storyListResponse.stories.every((x) => x.id !== message.story.id)) {
           storyListResponse.stories = [message.story, ...storyListResponse.stories];
+          userStories = [message.story, ...userStories];
         }
         break;
       case "refresh":
         if (loadingState === "ready") {
           cursor = 0;
           fCursor = 0;
+          uCursor = 0;
+          uLoadingState = "refetch";
           fLoadingState = "refetch";
           loadingState = "refetch";
           if (authenticated) {
             fetchFriendStories();
+            fetchUserStories();
           }
           fetchExploreStories();
         }
@@ -81,6 +118,36 @@
   {:else if loadingState === "initial" || loadingState === "refetch"}
     <p>loading stories...</p>
   {:else}
+    {#if authenticated && userStories.length > 0}
+      <p class="caption" style="margin-top: -2px;">Own Stories</p>
+      <div class="story-grid">
+        {#each userStories as story}
+          <StoryBubble
+            onClick={() => {
+              tsvscode.postMessage({ type: 'onStoryPress', value: story });
+            }}
+            {...story} />
+        {/each}
+      </div>
+      {#if uHasMore}
+        <button
+          disabled={uLoadingState !== 'ready'}
+          on:click={() => {
+            uLoadingState = 'more';
+            uCursor++;
+            if (authenticated) {
+              fetchUserStories();
+            }
+          }}>
+        {#if uLoadingState === 'more'}
+          loading<span class="one">.</span><span class="two">.</span><span class="three">.</span>
+        {:else}
+          load more
+        {/if}
+        </button>
+      {/if}
+      <hr />
+    {/if}
     {#if authenticated && friendsStoryListResponse.stories.length > 0}
       <p class="caption" style="margin-top: -2px;">GitHub Friends</p>
       <div class="story-grid">

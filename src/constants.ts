@@ -10,3 +10,4 @@ export const apiBaseUrl = _prod_
 export const gifUploadLimit = 33554432; //32MB
 const cloudBucket = "gif-stories";
 export const gifPublicUrl = `https://storage.googleapis.com/${cloudBucket}`;
+export const awesomeLogo = "https://github.com/JessicaDosseh";
